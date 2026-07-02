@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function() {
     renderGrid();
-    const data = await startSession();
+    const userId = sessionStorage.getItem("selected_user_id");
+    const data = await startSession(userId);
     // data.response contient le premier message
     console.log(data); // A supprimer
     const message = document.getElementById("last-message");

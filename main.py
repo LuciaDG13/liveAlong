@@ -6,7 +6,6 @@ def main():
     user_id = "ncIl1AyFDPYCRHgcalax" # Id en fonction du profil choisi (Firebase) 
     theme = "Change of plans"
 
-    # Attention: si on ne met rien on a une erreur
     user_profile = get_user_profile(user_id)
     if not user_profile:
         return

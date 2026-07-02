@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>LiveAlong</title>
+        <link href="../static/css/creation-profile.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <link rel="icon" type="image/svg+xml" href="../static/icons/robot.svg">
+    </head>
+    <body>
+        <header class="header-outer" id="header_id">
+            <div class="header-inner responsive-wrapper">
+                <div class="header-logo">
+                    <a href="/"><img src="../static/images/illustration_robot.png" alt="Logo"/></a>                  
+                </div>
+                <h1 class="header-name-appli">LiveAlong</h1>                
+            </div>         
+        </header>
+        
+        <main class="responsive-wrapper">
+            <h1 class="page-title">Create Profile</h1>
+            
+            <div id="progression" class="steps-indicator">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+
+            <form id="multi-step-form">
+                <section class="form-step step-active" id="step-1">
+                    <h2>Identity</h2>
+                    <div class="form-group">
+                        <label for="name">First Name & Last Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth:</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pronoun">Pronouns to use:</label>
+                        <input type="text" id="pronoun" name="pronoun" placeholder="e.g., he/him, she/her, they/them...">
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-2">
+                    <h2>Communication</h2>
+                    <div class="form-group">
+                        <label for="communication-type">Communication Type:</label>
+                        <select id="communication-type" name="communication-type" required>
+                            <option value="">Select</option>
+                            <option value="Verbal">Verbal</option>
+                            <option value="Non-verbal">Non-verbal</option>
+                            <option value="Partially verbal">Partially verbal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="language-level">Language Level:</label>
+                        <textarea id="language-level" name="language-level" rows="3" placeholder="Description of vocabulary, sentence structure, AAC tools used..."></textarea>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-3">
+                    <h2>Diagnosis</h2>
+                    <div class="form-group">
+                        <label for="autism-level">Autism Level / Specifics:</label>
+                        <textarea id="autism-level" name="autism-level" rows="3" placeholder="Support level required (1, 2, 3) or diagnostic details..."></textarea>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-4">
+                    <h2>Interests</h2>
+                    <div class="form-group">
+                        <label for="interests">Special Interests:</label>
+                        <textarea id="interests" name="interests" rows="4" placeholder="Specific interests, favorite topics, passions..."></textarea>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-5">
+                    <h2>Sensory Profile</h2>
+                    <p class="section-instruction">Indicate sensitivities for each category:</p>
+                    <div class="form-group">
+                        <label for="sensory-auditory">Auditory:</label>
+                        <input type="text" id="sensory-auditory" name="sensory-auditory" placeholder="e.g., Hypersensitivity to high-pitched noises">
+                    </div>
+                    <div class="form-group">
+                        <label for="sensory-visual">Visual:</label>
+                        <input type="text" id="sensory-visual" name="sensory-visual" placeholder="e.g., Attracted to reflections, fatigued by fluorescent lights">
+                    </div>
+                    <div class="form-group">
+                        <label for="sensory-tactile">Tactile:</label>
+                        <input type="text" id="sensory-tactile" name="sensory-tactile" placeholder="e.g., Avoids certain clothing textures">
+                    </div>
+                    <div class="form-group">
+                        <label for="sensory-olfactory">Olfactory:</label>
+                        <input type="text" id="sensory-olfactory" name="sensory-olfactory" placeholder="e.g., Sensitivity to strong perfumes">
+                    </div>
+                    <div class="form-group">
+                        <label for="sensory-gustatory">Gustatory:</label>
+                        <input type="text" id="sensory-gustatory" name="sensory-gustatory" placeholder="e.g., Marked food selectivity / picky eating">
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-6">
+                    <h2>Soothing &amp; Physical Contact</h2>
+                    <div class="form-group">
+                        <label for="soothing">Comforting gestures or objects (transitional object, specific stimming...):</label>
+                        <textarea id="soothing" name="soothing" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="physical-contact">Relationship with Physical Contact:</label>
+                        <select id="physical-contact" name="physical-contact" required>
+                            <option value="">Select</option>
+                            <option value="Comfortable">Comfortable</option>
+                            <option value="Avoids contact">Avoids contact</option>
+                            <option value="Context-dependent">Context-dependent</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-7">
+                    <h2>Initial Clinical Context</h2>
+                    <div class="form-group">
+                        <label for="clinical-context">Known Social Difficulties:</label>
+                        <textarea id="clinical-context" name="clinical-context" rows="4" placeholder="Interactions with peers, emotional decoding..."></textarea>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-8">
+                    <h2>Anxiety Triggers</h2>
+                    <div class="form-group">
+                        <label for="triggers">Known Anxiety Triggers:</label>
+                        <textarea id="triggers" name="triggers" rows="4" placeholder="Unexpected changes, transitions, prolonged waiting..."></textarea>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-9">
+                    <h2>Information Content (this will be used for the creation of the user account)</h2>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </section>
+            </form>
+        </main>
+
+        <div id="nav-bar">
+            <div id="nav-left">
+                <button type="button" id="btn-back" class="bi bi-arrow-left-circle-fill hidden-btn" aria-label="Previous step"></button>
+            </div>
+            <div id="nav-right">
+                <button type="button" id="btn-next" class="bi bi-arrow-right-circle-fill" aria-label="Next step"></button>
+            </div>
+        </div>
+
+        <script src="../static/js/creation-profile.js"></script>
+    </body>
+</html>

@@ -1,6 +1,6 @@
 from google import genai
 from google.genai import types
-from config import API_KEY, LLM_MODEL, LLM_MAX_TOKENS
+from config.config import API_KEY, LLM_MODEL, LLM_MAX_TOKENS
 import json
 
 client = genai.Client(api_key=API_KEY)

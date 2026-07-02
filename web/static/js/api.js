@@ -1,15 +1,18 @@
 /* StartSession, sendMessages(text), endSession() */
 
-async function startSession(){
+async function startSession(userId){
     try {
-        const response = await fetch("/start", {method:"POST"});
+        const response = await fetch("/start", {
+            method:"POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })
+        });
         const data = await response.json();
         return data;
     } catch (error) {
         console.error("Network error", error);
     }
 }
-
 
 // La fonction attend message pas user_input => est censé se voir dans app.py
 async function sendMessage(text){

@@ -220,3 +220,6 @@ __marimo__/
 .streamlit/secrets.toml
 
 livealong-a8e0b-firebase-adminsdk-fbsvc-2db2b6ea4c.json
+config/config.py
+config.py
+create_therapist.py
