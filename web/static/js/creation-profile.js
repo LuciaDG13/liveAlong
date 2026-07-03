@@ -83,6 +83,9 @@ async function saveProfile(form) {
         alert("Profile successfully saved!");
         // Redirige ou réinitialise le formulaire ici si besoin
         // window.location.href = "/profiles";
+
+        // Ajouter une possibilité de redirection vers une autre page après la sauvegarde réussie
+        
     } catch (error) {
         console.error("Failed to save profile:", error);
         alert("Something went wrong while saving the profile. Please try again.");

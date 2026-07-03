@@ -35,4 +35,17 @@ async function verifyWithBackend(token) {
     }
 }
 
-export { signIn, signOut, verifyWithBackend };
+async function requireAuth(expectedRole) {
+    const token = sessionStorage.getItem("auth_token");
+    if (!token) {
+        console.log("pas de token"); // Debugging line
+        window.location.href = "/";
+        return;
+    }
+    const result = await verifyWithBackend(token);
+    if (!result || result.error || result.redirect_url !== `/${expectedRole === "therapist" ? "therapist" : "child_interface"}`) {
+        window.location.href = "/";
+    }
+}
+
+export { signIn, signOut, verifyWithBackend, requireAuth };

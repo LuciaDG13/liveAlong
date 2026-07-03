@@ -28,10 +28,7 @@ def home():
     return render_template("login.html")
 
 @app.route("/child_interface")
-@login_required
-def child_interface(current_user):
-    if (current_user["role"] != "child"):
-        return jsonify({"error": "Unauthorized"}), 403
+def child_interface():
     return render_template("child.html")
 
 @app.route("/therapist")
@@ -110,11 +107,7 @@ def end(current_user):
     return jsonify({"status": "session terminée"})
 
 @app.route("/therapist/create_profile", methods=["GET", "POST"])
-@login_required
-def create_profile(current_user):
-    if(current_user["role"] != "therapist"):
-        return jsonify({"error": "Unauthorized"}), 403
-
+def create_profile():
     if request.method == "GET":
         return render_template("creation-profile.html")
     
@@ -155,12 +148,13 @@ def create_profile(current_user):
 @app.route("/auth/verify", methods=["POST"])
 def verify_token():
     token = request.headers.get("Authorization")
+    print(f"Received token: {token}")  # Debugging line
     if not token:
         return jsonify({"error": "Missing token"}), 400
     token = token.split("Bearer ")[-1]
     try:
-        decoded_token = auth.verify_id_token(token)
-    except Exception:
+        decoded_token = auth.verify_id_token(token, clock_skew_seconds=10)
+    except Exception as e:
         return jsonify({"error": "Invalid token"}), 401
     if decoded_token.get("role") == "therapist":
         return jsonify({"redirect_url": "/therapist"})
@@ -178,10 +172,7 @@ def get_profiles(current_user):
     return jsonify({"profiles": profiles})
 
 @app.route("/therapist/profiles")
-@login_required
-def select_profile(current_user):
-    if current_user.get("role") != "therapist":
-        return jsonify({"error": "Unauthorized"}), 403
+def select_profile():
     return render_template("select-profile.html")
 
 if __name__ == "__main__":

@@ -50,6 +50,13 @@ body {
 	justify-content: flex-start;
 }
 
+.responsive-wrapper {
+	width: 90%;
+	max-width: 1280px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .header-logo img {
 	display: block;
 	height: var(--header-inner-height);
@@ -63,8 +70,6 @@ body {
 
 .responsive-wrapper {
     width: 90%;
-	display:flex;
-	flex-direction: column;
     max-width: 700px; /* Largeur idéale pour un formulaire style Google Forms */
     margin-left: auto;
     margin-right: auto;
@@ -112,8 +117,7 @@ body {
     outline: none; /* Enlève les contours bleus natifs */
 }
 
-.btn-container {	
-	padding-top: 40vh;
+.btn-container {
     display:flex;
     align-items: center;
     justify-content: center;
