@@ -3,13 +3,15 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from firebase_admin import auth
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, make_response
 from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles
 from user_profiles.user_profile import get_user_profile
 from llm.companion import run_session, analyze_session, consolidate_profile
 import secrets
-from web.auth import login_required
+from web.auth import login_required, page_login_required
+from datetime import timedelta
 
+SESSION_EXPIRES_IN= timedelta(days=3)
 
 app = Flask(__name__)
 
@@ -28,12 +30,16 @@ def home():
     return render_template("login.html")
 
 @app.route("/child_interface")
-def child_interface():
+@page_login_required
+def child_interface(current_user):
+    if (current_user["role"]!="child"):
+        return jsonify({"error": "Unauthorized"}), 403
     return render_template("child.html")
 
 @app.route("/therapist")
-@login_required
+@page_login_required
 def therapist(current_user):
+    print(f"The user is {current_user.get('role')} whose name is {current_user.get('name')}")
     if (current_user["role"] != "therapist"):
         return jsonify({"error": "Unauthorized"}), 403
     return render_template("therapist.html")
@@ -139,29 +145,50 @@ def create_profile():
     if new_id is None:
         return jsonify({"error": "Failed to create user account"}), 500
     email_sent = send_temp_password(email, password)
-    if email_sent is None:        
+    if email_sent is None:      
+        auth.delete_user(new_id)
+        print("User {new_id} deleted due to email failure")  
         return jsonify({"error": "Failed to send temporary password email"}), 500
     mapped_data["user_id"] = new_id
-    create_user_profile(mapped_data)
+    try:   
+        create_user_profile(mapped_data)
+    except Exception as e:
+        auth.delete_user(new_id)
+        print("User {new_id} deleted due to an error: {e}") 
+        return jsonify({"error": "Failed to create user profile"}), 500
     return jsonify({"user_id": new_id})
 
 @app.route("/auth/verify", methods=["POST"])
-def verify_token():
-    token = request.headers.get("Authorization")
-    print(f"Received token: {token}")  # Debugging line
-    if not token:
+def verify_token():    
+    id_token = (request.json or {}).get("idToken")
+    if not id_token:
         return jsonify({"error": "Missing token"}), 400
-    token = token.split("Bearer ")[-1]
     try:
-        decoded_token = auth.verify_id_token(token, clock_skew_seconds=10)
-    except Exception as e:
+        decoded_token = auth.verify_id_token(id_token, clock_skew_seconds=10)
+    except Exception:
         return jsonify({"error": "Invalid token"}), 401
     if decoded_token.get("role") == "therapist":
-        return jsonify({"redirect_url": "/therapist"})
+        redirect_url= "/therapist"
     elif decoded_token.get("role") == "child":
-        return jsonify({"redirect_url": "/child_interface"})
+        redirect_url= "/child_interface"
     else:
         return jsonify({"error": "Invalid role"}), 403
+    
+    try: 
+        session_cookie = auth.create_session_cookie(id_token, expires_in=SESSION_EXPIRES_IN)
+    except Exception:
+        return jsonify({"error": "Failed to create session"}), 401
+    
+    response = make_response(jsonify({"redirect_url": redirect_url}))
+    response.set_cookie(
+        "session",
+        session_cookie,
+        max_age=int(SESSION_EXPIRES_IN.total_seconds()),
+        httponly=True,
+        samesite="Strict",
+        path="/"
+    )
+    return response
 
 @app.route("/api/profiles", methods=["GET"])
 @login_required
