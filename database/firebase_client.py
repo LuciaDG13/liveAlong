@@ -5,7 +5,9 @@ from config.config import FIREBASE_CREDENTIALS_PATH, SENDGRID_API_KEY, SENDGRID_
 from datetime import datetime
 from sendgrid import SendGridAPIClient 
 from sendgrid.helpers.mail import Mail
+from dotenv import load_dotenv
 
+load_dotenv()
 sg = SendGridAPIClient(api_key=SENDGRID_API_KEY)
 
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
@@ -99,7 +101,7 @@ def send_temp_password(email, password):
         print(f"Temporary password email sent to {email}")
         return True
     except Exception as e:
-        print(f"Error sending email to {email}: {e}")
+        print(f"Error sending email to {email}: {e.body}")
         return None
 
 def create_auth_account(email, password):
