@@ -164,7 +164,7 @@ def verify_token():
     if not id_token:
         return jsonify({"error": "Missing token"}), 400
     try:
-        decoded_token = auth.verify_id_token(id_token, clock_skew_seconds=10)
+        decoded_token = auth.verify_id_token(id_token, clock_skew_seconds=60)
     except Exception:
         return jsonify({"error": "Invalid token"}), 401
     if decoded_token.get("role") == "therapist":

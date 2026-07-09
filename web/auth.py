@@ -9,8 +9,9 @@ def get_decoded_session():
         """Debugging line"""
         return None
     try:
-        return auth.verify_session_cookie(session_cookie, check_revoked= True)
-    except Exception:
+        return auth.verify_session_cookie(session_cookie, check_revoked= True, clock_skew_seconds=60)
+    except Exception as e:
+        print(f"Error verify_session_cookie: {e}")
         return None
     
 

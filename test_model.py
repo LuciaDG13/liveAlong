@@ -3,13 +3,13 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import PeftModel
 
 # 1. Modèle de base officiel (téléchargé automatiquement)
-model_id = "Qwen/Qwen2.5-7B-Instruct"
+LLM_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
 # 2. Le chemin vers TON dossier local où se trouvent adapter_config.json et adapter_model.safetensors
 path_to_lora = "C:/Users/ISK26RA1001/Documents/Internship-LiveAlong-Lucia/liveAlong/ASD-iLLM/lora-weight"
 
 print("Chargement du tokenizer officiel Qwen2.5...")
-tokenizer = AutoTokenizer.from_pretrained(model_id)
+tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
 
 print("Configuration de la compression 4-bits pour la RTX 4070...")
 quantization_config = BitsAndBytesConfig(
@@ -20,7 +20,7 @@ quantization_config = BitsAndBytesConfig(
 
 print("Chargement du modèle de base Qwen compressé (Léger : ~5 Go)...")
 base_model = AutoModelForCausalLM.from_pretrained(
-    model_id,
+    LLM_MODEL,
     quantization_config=quantization_config,
     device_map="auto"
 )

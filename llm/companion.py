@@ -4,13 +4,13 @@ from google.genai import types """
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import PeftModel
-from config.config import MODEL_ID, LORA_PATH, LLM_MAX_TOKENS
+from config.config import LLM_MODEL, LORA_PATH, LLM_MAX_TOKENS
 import json
 
 """ client = genai.Client(api_key=API_KEY) """
 
 # Loading of the model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
 
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -19,7 +19,7 @@ quantization_config = BitsAndBytesConfig(
 )
 
 base_model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID,
+    LLM_MODEL,
     quantization_config=quantization_config,
     device_map="auto"
 )
