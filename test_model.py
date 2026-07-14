@@ -8,7 +8,7 @@ LLM_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 # 2. Le chemin vers TON dossier local où se trouvent adapter_config.json et adapter_model.safetensors
 path_to_lora = "C:/Users/ISK26RA1001/Documents/Internship-LiveAlong-Lucia/liveAlong/ASD-iLLM/lora-weight"
 
-print("Chargement du tokenizer officiel Qwen2.5...")
+print("nt du tokenizer officiel Qwen2.5...")
 tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
 
 print("Configuration de la compression 4-bits pour la RTX 4070...")

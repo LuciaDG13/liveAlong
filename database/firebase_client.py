@@ -21,7 +21,7 @@ def get_exercise(theme, levelAutism):
     query = (
         exercises_ref
         .where(filter=FieldFilter("Theme", "==", theme))
-        .where(filter=FieldFilter("LevelAutism", "==", int(levelAutism)))
+        .where(filter=FieldFilter("levelAutism", "==", levelAutism))
         .limit(1)
     )
     

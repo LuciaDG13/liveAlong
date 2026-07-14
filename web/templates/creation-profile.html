@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>LiveAlong</title>
+        <link href="../static/css/common.css" rel="stylesheet">
         <link href="../static/css/creation-profile.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -12,11 +13,20 @@
     <body>
         <header class="header-outer" id="header_id">
             <div class="header-inner responsive-wrapper">
-                <div class="header-logo">
-                    <a href="/"><img src="../static/images/illustration_robot.png" alt="Logo"/></a>                  
+                <div class="header-left">
+                    <a href="/therapist" class="header-back" id="creation-profile-back-link" aria-label="Back to therapist page">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <div class="header-logo">
+                        <img src="../static/images/illustration_robot.png" alt="Logo"/>
+                    </div>
+                    <h1 class="header-name-appli">LiveAlong</h1>
                 </div>
-                <h1 class="header-name-appli">LiveAlong</h1>                
-            </div>         
+                <div class="header-user-status" id="user-status-block">
+                    <span id="user-display-name" class="user-name">Loading...</span>
+                    <button type="button" id="btn-logout" class="btn-logout">Log out</button>
+                </div>
+            </div>
         </header>
         
         <main class="responsive-wrapper">
@@ -81,8 +91,16 @@
                 <section class="form-step" id="step-3">
                     <h2>Diagnosis</h2>
                     <div class="form-group">
-                        <label for="autism-level">Autism Level / Specifics:</label>
-                        <textarea id="autism-level" name="autism-level" rows="3" placeholder="Support level required (1, 2, 3) or diagnostic details..."></textarea>
+                        id = "levelAutism"
+                        <label for="levelAutism">Level Autism</label>
+                        <select id="levelAutism" name="levelAutism" required>
+                            <option value="">Select</option>
+                            <option value="1">Level 1</option>
+                            <option value="2">Level 2</option>
+                            <option value="3">Level 3</option>
+                        </select>
+                        <label for="diagnosed-details">Specifics:</label>
+                        <textarea id="specifics" name="specifics" rows="3" placeholder="Diagnostic details"></textarea>
                     </div>
                 </section>
 
@@ -185,5 +203,10 @@
         </div>
 
         <script src="../static/js/creation-profile.js"></script>
+        <script type="module">
+            import { requireAuth } from "../static/js/auth.js";
+            // On applique la sécurité thérapeute sur cette page
+            requireAuth("therapist");
+        </script>
     </body>
 </html>

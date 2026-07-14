@@ -6,7 +6,10 @@ const steps = document.querySelectorAll(".form-step");
 const dots = document.querySelectorAll(".dot");
 const btnNext = document.getElementById("btn-next");
 const btnBack = document.getElementById("btn-back");
+const backLink = document.getElementById("creation-profile-back-link");
+const form = document.getElementById("multi-step-form");
 let currentStep = 0;
+let isDirty = false;
 
 // Fonction par précaution
 function escapeHtml(str) {
@@ -18,6 +21,21 @@ function escapeHtml(str) {
 function getLabel(fieldName) {
     const label = document.querySelector(`label[for="${fieldName}"]`);
     return label ? label.textContent.replace(/:\s*$/, "") : fieldName;
+}
+
+function markDirty() {
+    isDirty = true;
+}
+
+function confirmLeavePage() {
+    if (!isDirty) return true;
+    return window.confirm("You are leaving this page. Unsaved information will be lost. Continue?");
+}
+
+function goToTherapistPage() {
+    if (confirmLeavePage()) {
+        window.location.assign("/therapist");
+    }
 }
 
 // Navigation entre les étapes du formulaire
@@ -71,7 +89,7 @@ async function saveProfile(form) {
 
     try {
         const response = await fetch("/therapist/create_profile", {
-            method: ["POST"],
+            method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload) 
         });
@@ -80,12 +98,9 @@ async function saveProfile(form) {
             throw new Error(`Server responded with status ${response.status}`);
         }
 
+        isDirty = false;
         alert("Profile successfully saved!");
-        // Redirige ou réinitialise le formulaire ici si besoin
-        // window.location.href = "/profiles";
-
-        // Ajouter une possibilité de redirection vers une autre page après la sauvegarde réussie
-        
+        window.location.assign("/therapist/profiles");
     } catch (error) {
         console.error("Failed to save profile:", error);
         alert("Something went wrong while saving the profile. Please try again.");
@@ -125,6 +140,27 @@ btnBack.addEventListener("click", () => {
     if (currentStep > 0) {
         currentStep--;
         updateForm();
+    } else {
+        goToTherapistPage();
+    }
+});
+
+if (backLink) {
+    backLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        goToTherapistPage();
+    });
+}
+
+if (form) {
+    form.addEventListener("input", markDirty);
+    form.addEventListener("change", markDirty);
+}
+
+window.addEventListener("beforeunload", (event) => {
+    if (isDirty) {
+        event.preventDefault();
+        event.returnValue = "";
     }
 });
 

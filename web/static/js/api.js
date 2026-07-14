@@ -1,5 +1,3 @@
-/* StartSession, sendMessages(text), endSession() */
-
 async function startSession(userId){
     try {
         const response = await fetch("/start", {
@@ -33,7 +31,8 @@ async function endSession(){
     try {
         const response = await fetch("/end", {
             method:"POST",
-        })
+            keepalive: true,
+        });
         const data = await response.json();
         return data;
     } catch (error){

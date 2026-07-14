@@ -3,15 +3,22 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from firebase_admin import auth
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response, send_file, jsonify
 from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles
 from user_profiles.user_profile import get_user_profile
 from llm.companion import run_session, analyze_session, consolidate_profile
 import secrets
 from web.auth import login_required, page_login_required
 from datetime import timedelta
+from faster_whisper import WhisperModel
+from kokoro import KPipeline
+import soundfile as sf
 
 SESSION_EXPIRES_IN= timedelta(days=3)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+whisper_model = WhisperModel("base.en", device="cuda", compute_type="float16")
+pipeline = KPipeline(lang_code='a')
+voices_path = os.path.join(BASE_DIR, "voices.bin")
 
 app = Flask(__name__)
 
@@ -27,7 +34,16 @@ session_state = {
 
 @app.route("/")
 def home():
-    return render_template("login.html")
+    response = make_response(render_template("login.html"))
+    response.set_cookie(
+        "session",
+        "",
+        expires=0,
+        httponly=True,
+        samesite="Strict",
+        path="/"
+    )
+    return response
 
 @app.route("/child_interface")
 @page_login_required
@@ -39,7 +55,6 @@ def child_interface(current_user):
 @app.route("/therapist")
 @page_login_required
 def therapist(current_user):
-    print(f"The user is {current_user.get('role')} whose name is {current_user.get('name')}")
     if (current_user["role"] != "therapist"):
         return jsonify({"error": "Unauthorized"}), 403
     return render_template("therapist.html")
@@ -49,7 +64,7 @@ def therapist(current_user):
 def start(current_user):
     if (current_user["role"] != "child"):
         return jsonify({"error": "Unauthorized"}), 403
-    user_id = request.json.get("user_id")
+    user_id = current_user["uid"]
     theme = "Change of plans"
     user_profile = get_user_profile(user_id)
     exercise = get_exercise(theme, user_profile["levelAutism"])
@@ -89,6 +104,51 @@ def message(current_user):
 
     return jsonify({"response": response})
 
+@app.route("/message_voice", methods=["POST"])
+@login_required
+def message_voice(current_user):
+    if current_user["role"] != "child":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    if 'audio' not in request.files:
+        return jsonify({"error": "No audio file received"}), 400
+
+    # 1. Récupération et sauvegarde de l'audio du téléphone
+    audio_file = request.files['audio']
+    input_path = "input.wav"
+    audio_file.save(input_path)
+
+    # 2. Transcription Whisper (Audio -> Texte anglais)
+    segments, _ = whisper_model.transcribe(input_path, language="en")
+    user_input = "".join([segment.text for segment in segments])
+
+    # 3. Ton système de session et d'historique natif
+    save_message(session_state["session_id"], "user", user_input)
+    session_state["conversation_history"].append({"role": "user", "parts": user_input})
+
+    # 4. TON LLM ADAPTÉ (Inchangé)
+    response_text = run_session(
+        session_state["user_profile"],
+        session_state["exercise"],
+        session_state["conversation_history"]
+    )
+
+    save_message(session_state["session_id"], "assistant", response_text)
+    session_state["conversation_history"].append({"role": "assistant", "parts": response_text})
+
+    # 5. TTS avec la bibliothèque officielle hexgrad (Utilisation de pipeline)
+    # 'af_heart' est une voix féminine très douce et posée
+    generator = pipeline(response_text, voice='af_heart', speed=1.0)
+    
+    # On génère le fichier audio à partir du premier morceau de texte traité
+    for i, (graphemes, phonemes, audio) in enumerate(generator):
+        output_path = "response.wav"
+        sf.write(output_path, audio, 24000) # Fréquence officielle de 24000Hz
+        break 
+
+    # 6. Envoi au téléphone
+    return send_file(output_path, mimetype="audio/wav")
+
 @app.route("/end", methods=["POST"])
 @login_required
 def end(current_user):
@@ -102,6 +162,13 @@ def end(current_user):
         session_state["conversation_history"],
         session_state["theme"]
     )
+    session_state.update({
+        "session_id": None,
+        "user_profile": None,
+        "exercise": None,
+        "theme": None,
+        "conversation_history": []
+    })
     consolidated_profile = consolidate_profile(session_state["user_profile"], insights)
     update_profile_insights(
     current_user["user_id"],
@@ -125,7 +192,7 @@ def create_profile():
         "pronoun": profile_data.get("pronoun"),
         "communication-type": profile_data.get("communication-type"),
         "language-level": profile_data.get("language-level"),
-        "autism-level": profile_data.get("autism-level"),
+        "levelAutism": profile_data.get("levelAutism"),
         "interests": profile_data.get("interests"),
         "sensory-auditory": profile_data.get("sensory-auditory"),
         "sensory-visual": profile_data.get("sensory-visual"),
@@ -151,7 +218,7 @@ def create_profile():
         return jsonify({"error": "Failed to send temporary password email"}), 500
     mapped_data["user_id"] = new_id
     try:   
-        create_user_profile(mapped_data)
+        create_user_profile(mapped_data, user_id=new_id)
     except Exception as e:
         auth.delete_user(new_id)
         print("User {new_id} deleted due to an error: {e}") 
@@ -165,6 +232,11 @@ def verify_token():
         return jsonify({"error": "Missing token"}), 400
     try:
         decoded_token = auth.verify_id_token(id_token, clock_skew_seconds=60)
+        uid = decoded_token.get("uid")
+        user_profile = get_user_profile(uid)
+        name = user_profile.get("name") if user_profile else None
+        print("Le nom est ", name) 
+        '''Debugging line'''
     except Exception:
         return jsonify({"error": "Invalid token"}), 401
     if decoded_token.get("role") == "therapist":
@@ -179,7 +251,7 @@ def verify_token():
     except Exception:
         return jsonify({"error": "Failed to create session"}), 401
     
-    response = make_response(jsonify({"redirect_url": redirect_url}))
+    response = make_response(jsonify({"redirect_url": redirect_url, "name": name}))
     response.set_cookie(
         "session",
         session_cookie,

@@ -1,11 +1,33 @@
+let childSessionEnded = false;
+
+function endChildSessionAndRedirect(targetUrl = "/") {
+    if (childSessionEnded) {
+        window.location.assign(targetUrl);
+        return;
+    }
+
+    childSessionEnded = true;
+    endSession().finally(() => {
+        window.location.assign(targetUrl);
+    });
+}
+
+function notifyChildSessionEnd() {
+    if (childSessionEnded) return;
+    childSessionEnded = true;
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon("/end", new Blob(["{}"], { type: "application/json" }));
+    } else {
+        fetch("/end", { method: "POST", keepalive: true });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
     renderGrid();
     const userId = sessionStorage.getItem("selected_user_id");
     const data = await startSession(userId);
-    // data.response contient le premier message
-    console.log(data); // A supprimer
     const message = document.getElementById("last-message");
-    message.textContent = data.response;    
+    message.textContent = data.response;
     showMessageState();
 });
 
@@ -33,6 +55,7 @@ function showMessageState() {
     document.getElementById("response-zone").classList.add("hidden");
     document.getElementById("btn-next").classList.remove("hidden");
     document.getElementById("btn-back").classList.add("hidden");
+    document.getElementById("btn-end-session").removeAttribute("hidden");
 }
 
 function showResponseState() {
@@ -43,18 +66,27 @@ function showResponseState() {
     document.getElementById("btn-micro").removeAttribute("hidden");
 }
 
-document.getElementById("btn-next").onclick=() => {
+document.getElementById("btn-next").onclick = () => {
     showResponseState();
 }
 
-document.getElementById("btn-back").onclick=() => {
+document.getElementById("btn-back").onclick = () => {
     showMessageState();
+}
+
+document.getElementById("btn-home").onclick = () => {
+    endChildSessionAndRedirect("/");
 }
 
 document.getElementById("btn-end-session").onclick = async () => {
     await endSession();
-    displayMessage("Bravo ! La session est terminée.");
+    childSessionEnded = true;
+    displayMessage("Bravo ! La session is finished.");
     document.getElementById("btn-next").classList.add("hidden");
     document.getElementById("btn-back").classList.add("hidden");
     document.getElementById("btn-end-session").setAttribute("hidden", "");
+    document.getElementById("btn-home").focus();
 }
+
+window.addEventListener("pagehide", notifyChildSessionEnd);
+window.addEventListener("beforeunload", notifyChildSessionEnd);

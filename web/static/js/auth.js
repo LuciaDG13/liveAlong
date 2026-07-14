@@ -12,6 +12,12 @@ async function signIn(email, password) {
     }
 }
 
+function clearClientSession() {
+    sessionStorage.removeItem("auth_token");
+    sessionStorage.removeItem("selected_user_id");
+    document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
+
 async function signOut() {
     try {
         await firebaseSignOut(firebaseAuth);
@@ -28,6 +34,7 @@ async function verifyWithBackend(idToken) {
             body: JSON.stringify({idToken})
         });
         const data = await response.json();
+        console.log(`Voici a quoi ressemble le data: ${data}`) /* Debugging line */
         return data;
     } catch (error) {
         console.error("Error verifying token with backend:", error);
@@ -35,22 +42,69 @@ async function verifyWithBackend(idToken) {
 }
 
 async function requireAuth(expectedRole) {
-    console.log ("On arrive à la fonction d'authentification") // Debugging line
+    console.log("On arrive à la fonction d'authentification");
     const token = sessionStorage.getItem("auth_token");
-    console.log("Toujours la fonction d'authentification")// Debugging line
+    
     if (!token) {
-        console.log("pas de token"); // Debugging line
         window.location.href = "/";
-        console.log("On est censés être redirigés vers le nouvel url")
         return;
     }
-    console.log("Juste avant la focntion verifywithebackend") // Debugging line
+    
     const result = await verifyWithBackend(token);
-    console.log("Juste après la fonction verifywithbackend") // Debugging line
-    if (!result || result.error || result.redirect_url !== `/${expectedRole === "therapist" ? "therapist" : "child_interface"}`) {
-        console.log("ya une erreur ou quelque chose")
+    console.log("Données reçues du serveur (result) :", result); // Debugging line
+    
+    const isTherapistValid = expectedRole === "therapist" && result.redirect_url.includes("therapist");
+    const isChildValid = expectedRole === "child" && result.redirect_url.includes("child_interface");
+
+    if (!result || result.error || (!isTherapistValid && !isChildValid)) {
+        console.log("Accès refusé ou rôle incorrect, redirection vers l'accueil...");
         window.location.href = "/";
+        return;
+    }
+
+    const nameDisplay = document.getElementById("user-display-name");
+    if (nameDisplay) {
+        /* A MODIFIER */
+        nameDisplay.textContent = result.name || result.displayName || (expectedRole === "therapist" ? "Therapist" : "Child");
+    }
+
+    const logoLink = document.getElementById("link-logo");
+    if (logoLink) {
+        logoLink.href = expectedRole === "therapist" ? "/therapist" : "/child_interface";
     }
 }
 
-export { signIn, signOut, verifyWithBackend, requireAuth };
+document.addEventListener("click", async (event) => {
+    const logoutButton = event.target.closest && event.target.closest("#btn-logout");
+    const logoutLink = event.target.closest && event.target.closest(".header-back[data-confirm-logout='true']");
+
+    if (logoutButton) {
+        event.preventDefault();
+        const shouldLogout = window.confirm("You are about to log out and return to the login page. Continue?");
+        if (!shouldLogout) return;
+
+        try {
+            await signOut();
+            clearClientSession();
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
+    }
+
+    if (logoutLink) {
+        event.preventDefault();
+        const shouldLogout = window.confirm("You are about to log out and return to the login page. Continue?");
+        if (!shouldLogout) return;
+
+        try {
+            await signOut();
+            clearClientSession();
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
+    }
+});
+
+export { signIn, signOut, verifyWithBackend, requireAuth, clearClientSession };
