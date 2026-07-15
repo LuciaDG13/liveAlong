@@ -3,7 +3,6 @@ const profileList = document.getElementById("profile-list");
 
 let allProfiles = [];
 
-// Évite l'injection HTML quand on affiche le nom d'un profil
 function escapeHtml(str) {
     const div = document.createElement("div");
     div.textContent = str;
@@ -35,7 +34,6 @@ function renderProfiles(profiles) {
     `).join("");
 }
 
-// Filtrage local : pas besoin de retaper Firestore à chaque caractère
 searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
     const filtered = allProfiles.filter(profile =>
@@ -44,8 +42,6 @@ searchInput.addEventListener("input", () => {
     renderProfiles(filtered);
 });
 
-// Délégation d'événement : les .profile-card sont créées dynamiquement,
-// donc on écoute les clics sur le conteneur parent plutôt que sur chaque carte
 profileList.addEventListener("click", (event) => {
     const card = event.target.closest(".profile-card");
     if (!card) return;

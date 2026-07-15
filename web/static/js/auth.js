@@ -27,44 +27,37 @@ async function signOut() {
 }
 
 async function verifyWithBackend(idToken) {
-    try{
+    try {
         const response = await fetch("/auth/verify", {
             method: "POST",
-            headers: {"Content-Type": "Application/json"},
-            body: JSON.stringify({idToken})
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken })
         });
-        const data = await response.json();
-        console.log(`Voici a quoi ressemble le data: ${data}`) /* Debugging line */
-        return data;
+        return response.json();
     } catch (error) {
         console.error("Error verifying token with backend:", error);
     }
 }
 
 async function requireAuth(expectedRole) {
-    console.log("On arrive à la fonction d'authentification");
     const token = sessionStorage.getItem("auth_token");
-    
+
     if (!token) {
         window.location.href = "/";
         return;
     }
-    
+
     const result = await verifyWithBackend(token);
-    console.log("Données reçues du serveur (result) :", result); // Debugging line
-    
     const isTherapistValid = expectedRole === "therapist" && result.redirect_url.includes("therapist");
     const isChildValid = expectedRole === "child" && result.redirect_url.includes("child_interface");
 
     if (!result || result.error || (!isTherapistValid && !isChildValid)) {
-        console.log("Accès refusé ou rôle incorrect, redirection vers l'accueil...");
         window.location.href = "/";
         return;
     }
 
     const nameDisplay = document.getElementById("user-display-name");
     if (nameDisplay) {
-        /* A MODIFIER */
         nameDisplay.textContent = result.name || result.displayName || (expectedRole === "therapist" ? "Therapist" : "Child");
     }
 

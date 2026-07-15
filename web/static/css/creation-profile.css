@@ -1,83 +1,138 @@
-:root {
-    --nav-height: 76px; /* hauteur fixe de la barre de boutons en bas */
-}
-
-/* ---Progression--- */
+/* --- BARRE DE PROGRESSION ÉTAPE PAR ÉTAPE --- */
 .steps-indicator {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 35px;
+    gap: 8px;
+    margin-bottom: 32px;
+    padding: 12px;
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
 }
 
-.dot {
-    width: 10px;
-    height: 10px;
-    background-color: #e0e0e0;
-    border-radius: 50%;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.active {
-    background-color: #7cdebc;
-    transform: scale(1.2); /* Agrandit de 120% */
-}
-
-/* --- FORM & STEPS --- */
-#multi-step-form {
+.steps-indicator .dot {
     flex: 1;
-    overflow-y: auto;
-    background-color: #ffffff;
-    border: 4px solid rgb(210, 240, 230, 0.6);
-    border-radius: 14px;
-    padding: 30px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    height: 8px;
+    background-color: var(--color-background);
+    border-radius: 99px;
+    transition: all 0.3s ease;
 }
 
+.steps-indicator .dot.active {
+    background-color: var(--color-accent);
+}
+
+/* --- ÉTAPES DE FORMULAIRE ACTIVES --- */
 .form-step {
-    display: none; /* Par défaut, toutes les étapes sont cachées */
+    display: none;
+    background: var(--color-surface);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border-color);
+    box-shadow: var(--shadow);
+    margin-bottom: 80px; /* Espace pour éviter que la barre de navigation ne cache le formulaire */
 }
 
 .form-step.step-active {
-    display: block; /* On affiche uniquement l'étape active */
+    display: block;
 }
 
 .form-step h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #f0f0f0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--color-accent);
+    border-bottom: 2px solid var(--color-accent-soft);
     padding-bottom: 8px;
 }
 
-.section-instruction {
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-}
-
-/* --- recap--- */
-.recap-box {
-    background-color: #f9fbfd;
-    border: 1px solid #d6e4f0;
-    border-radius: 6px;
-    padding: 20px;
+/* --- ELEMENTS DE FORMULAIRE (Unique à cette page !) --- */
+.form-group {
     margin-bottom: 20px;
-    max-height: 400px;
-    overflow-y: auto;
 }
 
-.recap-list dt {
-    font-weight: bold;
-    font-size: 0.85rem;
-    color: var(--color-accent); /* Correction du contraste pour la lisibilité */
-    margin-top: 12px;
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--text-color);
 }
 
-.recap-list dd {
-    margin-left: 0;
-    margin-bottom: 12px;
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: inherit;
     font-size: 0.95rem;
-    border-bottom: 1px solid #edf2f7;
-    padding-bottom: 6px;
+    border: 1.5px solid rgba(74, 117, 105, 0.2);
+    border-radius: 8px;
+    background-color: #FAFCFB;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--color-accent);
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(74, 117, 105, 0.12);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+/* Section d'instructions internes */
+.section-instruction {
+    font-style: italic;
+    color: var(--muted-color);
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+}
+
+/* Case à cocher de confirmation */
+.form-group label input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* Barre de navigation des étapes (en bas) */
+#nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background-color: var(--color-surface);
+    border-top: 1.5px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    z-index: 90;
+}
+
+#nav-bar button {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--color-accent);
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+#nav-bar button:hover {
+    color: #3C5E55;
+}
+
+#nav-bar button.hidden-btn {
+    visibility: hidden;
+    pointer-events: none;
 }

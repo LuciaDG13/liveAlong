@@ -11,18 +11,18 @@
         <link rel="icon" type="image/svg+xml" href="../static/icons/robot.svg">
     </head>
     <body>
-        <header class="header-outer" id="header_id">
+        <header class="header-outer">
             <div class="header-inner responsive-wrapper">
                 <div class="header-left">
-                    <a href="/therapist" class="header-back" id="creation-profile-back-link" aria-label="Back to therapist page">
+                    <a href="/therapist" class="header-back" aria-label="Back to therapist page">
                         <i class="bi bi-arrow-left"></i>
                     </a>
                     <div class="header-logo">
-                        <img src="../static/images/illustration_robot.png" alt="Logo"/>
+                        <img src="../static/images/illustration_robot.png" alt="Logo">
                     </div>
                     <h1 class="header-name-appli">LiveAlong</h1>
                 </div>
-                <div class="header-user-status" id="user-status-block">
+                <div class="header-user-status">
                     <span id="user-display-name" class="user-name">Loading...</span>
                     <button type="button" id="btn-logout" class="btn-logout">Log out</button>
                 </div>
@@ -32,7 +32,7 @@
         <main class="responsive-wrapper">
             <h1 class="page-title">Create Profile</h1>
             
-            <div id="progression" class="steps-indicator">
+            <div class="steps-indicator">
                 <span class="dot active"></span>
                 <span class="dot"></span>
                 <span class="dot"></span>
@@ -46,7 +46,7 @@
             </div>
 
             <form id="multi-step-form">
-                <section class="form-step step-active" id="step-1">
+                <section class="form-step step-active">
                     <h2>Identity</h2>
                     <div class="form-group">
                         <label for="name">First Name & Last Name:</label>
@@ -71,7 +71,7 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-2">
+                <section class="form-step">
                     <h2>Communication</h2>
                     <div class="form-group">
                         <label for="communication-type">Communication Type:</label>
@@ -88,10 +88,9 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-3">
+                <section class="form-step">
                     <h2>Diagnosis</h2>
                     <div class="form-group">
-                        id = "levelAutism"
                         <label for="levelAutism">Level Autism</label>
                         <select id="levelAutism" name="levelAutism" required>
                             <option value="">Select</option>
@@ -99,12 +98,12 @@
                             <option value="2">Level 2</option>
                             <option value="3">Level 3</option>
                         </select>
-                        <label for="diagnosed-details">Specifics:</label>
+                        <label for="specifics">Specifics:</label>
                         <textarea id="specifics" name="specifics" rows="3" placeholder="Diagnostic details"></textarea>
                     </div>
                 </section>
 
-                <section class="form-step" id="step-4">
+                <section class="form-step">
                     <h2>Interests</h2>
                     <div class="form-group">
                         <label for="interests">Special Interests:</label>
@@ -112,7 +111,7 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-5">
+                <section class="form-step">
                     <h2>Sensory Profile</h2>
                     <p class="section-instruction">Indicate sensitivities for each category:</p>
                     <div class="form-group">
@@ -137,7 +136,7 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-6">
+                <section class="form-step">
                     <h2>Soothing &amp; Physical Contact</h2>
                     <div class="form-group">
                         <label for="soothing">Comforting gestures or objects (transitional object, specific stimming...):</label>
@@ -154,7 +153,7 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-7">
+                <section class="form-step">
                     <h2>Initial Clinical Context</h2>
                     <div class="form-group">
                         <label for="clinical-context">Known Social Difficulties:</label>
@@ -162,7 +161,7 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-8">
+                <section class="form-step">
                     <h2>Anxiety Triggers</h2>
                     <div class="form-group">
                         <label for="triggers">Known Anxiety Triggers:</label>
@@ -170,7 +169,7 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-9">
+                <section class="form-step">
                     <h2>Information Content (this will be used for the creation of the user account)</h2>
                     <div class="form-group">
                         <label for="email">Email:</label>
@@ -178,7 +177,7 @@
                     </div>
                 </section>
 
-                <section class="form-step" id="step-10">
+                <section class="form-step">
                     <h2>Recap</h2>
                     <p class="section-instruction">Please review the information before submitting:</p>
                     <div id="recap-container"></div>

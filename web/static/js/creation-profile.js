@@ -11,7 +11,6 @@ const form = document.getElementById("multi-step-form");
 let currentStep = 0;
 let isDirty = false;
 
-// Fonction par précaution
 function escapeHtml(str) {
     const div = document.createElement("div");
     div.textContent = str;
@@ -37,8 +36,6 @@ function goToTherapistPage() {
         window.location.assign("/therapist");
     }
 }
-
-// Navigation entre les étapes du formulaire
 
 function updateForm() {
     steps.forEach((step, index) => {
@@ -78,8 +75,6 @@ function generateRecap() {
     recapContainer.innerHTML = html;
 }
 
-// Sauvegarde du profil via l'API
-
 async function saveProfile(form) {
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
@@ -108,8 +103,6 @@ async function saveProfile(form) {
         btnNext.disabled = false;
     }
 }
-
-// ---Événements---
 
 btnNext.addEventListener("click", () => {
     const currentInputs = steps[currentStep].querySelectorAll("input[required], select[required], textarea[required]");

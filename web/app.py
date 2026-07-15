@@ -192,7 +192,7 @@ def create_profile():
         "pronoun": profile_data.get("pronoun"),
         "communication-type": profile_data.get("communication-type"),
         "language-level": profile_data.get("language-level"),
-        "levelAutism": profile_data.get("levelAutism"),
+        "levelAutism": int(profile_data.get("levelAutism")) if profile_data.get("levelAutism") else None,
         "interests": profile_data.get("interests"),
         "sensory-auditory": profile_data.get("sensory-auditory"),
         "sensory-visual": profile_data.get("sensory-visual"),

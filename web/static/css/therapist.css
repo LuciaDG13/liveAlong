@@ -41,3 +41,32 @@
     visibility: hidden;
     pointer-events: none;
 }
+
+/* --- Boutons de navigation thérapeute --- */
+.btn-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-accent); /* Utilise votre joli vert */
+    color: #ffffff !important;             /* Force le texte en blanc */
+    text-decoration: none !important;      /* Enlève le soulignement bleu */
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    box-shadow: var(--shadow);
+}
+
+.btn-nav:hover {
+    background-color: #3C5E55; /* Version un peu plus sombre au survol */
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+}

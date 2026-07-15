@@ -1,13 +1,77 @@
-.connection{
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+.connection {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    font-size: 1.75rem;
+    font-weight: 700;
 }
 
 .form-container {
-	background-color: var(--color-surface);
-	padding: 30px;
-	border-radius: 10px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	margin-top: 2rem;
+    background-color: var(--color-surface);
+    padding: 36px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border-color);
+    box-shadow: var(--shadow);
+    margin: 24px auto;
+    max-width: 440px;
 }
 
+.form-container p {
+    color: var(--muted-color);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+/* --- Eléments de formulaire spécifiques à la connexion --- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    border: 1.5px solid rgba(74, 117, 105, 0.2);
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(74, 117, 105, 0.12);
+}
+
+/* Zone du bouton connexion */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.btn-login {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    max-width: 440px;
+}
+
+.btn-login:hover {
+    background-color: #3C5E55;
+}
