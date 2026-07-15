@@ -75,7 +75,7 @@ def run_session(user_profile, exercise, conversation_history):
     
     Profile of the user:
     - Name : {user_profile["name"]}
-    - Level of autism : {user_profile["LevelAutism"]}
+    - Level of autism : {user_profile["levelAutism"]}
     - Sensory sensibilities : {", ".join(user_profile["sensory"])}
     - Interests : {", ".join(user_profile["interest"])}
     - Level of vocabulary : {user_profile["language"]}
@@ -197,11 +197,11 @@ def run_session(user_profile, exercise, conversation_history):
     
     Profile of the user:
     - Name : {user_profile["name"]}
-    - Level of autism : {user_profile["LevelAutism"]}
+    - Level of autism : {user_profile["levelAutism"]}
     - Sensory sensibilities : {", ".join(user_profile["sensory"])}
-    - Interests : {", ".join(user_profile["interest"])}
+    - Interests : {user_profile["interest"]}
     - Level of vocabulary : {user_profile["language"]}
-    
+        
     Here is what we know about {user_profile["name"]} from the previous sessions : {insights_summary}.
     Use this informations to adapt your way to present the exercise, and to prevent from doing the same exercise every time.
     
@@ -306,7 +306,7 @@ def analyze_session(user_profile, conversation_history, theme):
 
     system_prompt = f"""
     Here is a conversation between an AI companion and a children named {user_profile['name']}.
-    Theme explored : {theme}
+    theme explored : {theme}
     
     Conversation :
     {conversation_text}

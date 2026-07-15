@@ -26,13 +26,19 @@ document.addEventListener("DOMContentLoaded", async function() {
     renderGrid();
     const userId = sessionStorage.getItem("selected_user_id");
     const data = await startSession(userId);
-    const message = document.getElementById("last-message");
-    message.textContent = data.response;
+    renderAIResponse(data);
     showMessageState();
 });
 
 function displayMessage(text) {
     document.getElementById("last-message").textContent = text;
+}
+function renderAIResponse(data) {
+    displayMessage(data.response);
+    if (data.audio) {
+        const audio = new Audio("data:audio/wav;base64," + data.audio);
+        audio.play();
+    }
 }
 
 document.getElementById("button-confirm-pict").onclick = async () => {
@@ -40,7 +46,7 @@ document.getElementById("button-confirm-pict").onclick = async () => {
     const labels = Array.from(imgs).map(img => img.alt);
     const messageText = labels.join(", "); // ex: "Happy, Sad"
     const data = await sendMessage(messageText);
-    displayMessage(data.response);
+    renderAIResponse(data);
     showMessageState();
     document.getElementById("selected-pictograms").innerHTML="";
 }

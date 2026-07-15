@@ -7,18 +7,15 @@ from flask import Flask, render_template, request, jsonify, make_response, send_
 from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles
 from user_profiles.user_profile import get_user_profile
 from llm.companion import run_session, analyze_session, consolidate_profile
+from llm.tts_service import synthesize_speech
 import secrets
 from web.auth import login_required, page_login_required
 from datetime import timedelta
 from faster_whisper import WhisperModel
-from kokoro import KPipeline
-import soundfile as sf
 
 SESSION_EXPIRES_IN= timedelta(days=3)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 whisper_model = WhisperModel("base.en", device="cuda", compute_type="float16")
-pipeline = KPipeline(lang_code='a')
-voices_path = os.path.join(BASE_DIR, "voices.bin")
 
 app = Flask(__name__)
 
@@ -67,7 +64,7 @@ def start(current_user):
     user_id = current_user["uid"]
     theme = "Change of plans"
     user_profile = get_user_profile(user_id)
-    exercise = get_exercise(theme, user_profile["LevelAutism"])
+    exercise = get_exercise(theme, user_profile["levelAutism"])
     session_id = create_session(user_id, theme)
 
     session_state["session_id"] = session_id
@@ -80,7 +77,8 @@ def start(current_user):
     save_message(session_id, "assistant", first_response)
     session_state["conversation_history"].append({"role": "assistant", "parts": first_response})
 
-    return jsonify({"response": first_response})
+    audio_b64 = synthesize_speech(first_response)
+    return jsonify({"response": first_response, "audio": audio_b64})
 
 @app.route("/message", methods=["POST"])
 @login_required
@@ -102,7 +100,8 @@ def message(current_user):
     save_message(session_state["session_id"], "assistant", response)
     session_state["conversation_history"].append({"role": "assistant", "parts": response})
 
-    return jsonify({"response": response})
+    audio_b64 = synthesize_speech(response)
+    return jsonify({"response": response, "audio": audio_b64})
 
 @app.route("/message_voice", methods=["POST"])
 @login_required
@@ -136,18 +135,11 @@ def message_voice(current_user):
     save_message(session_state["session_id"], "assistant", response_text)
     session_state["conversation_history"].append({"role": "assistant", "parts": response_text})
 
-    # 5. TTS avec la bibliothèque officielle hexgrad (Utilisation de pipeline)
-    # 'af_heart' est une voix féminine très douce et posée
-    generator = pipeline(response_text, voice='af_heart', speed=1.0)
-    
-    # On génère le fichier audio à partir du premier morceau de texte traité
-    for i, (graphemes, phonemes, audio) in enumerate(generator):
-        output_path = "response.wav"
-        sf.write(output_path, audio, 24000) # Fréquence officielle de 24000Hz
-        break 
+    save_message(session_state["session_id"], "assistant", response_text)
+    session_state["conversation_history"].append({"role": "assistant", "parts": response_text})
 
-    # 6. Envoi au téléphone
-    return send_file(output_path, mimetype="audio/wav")
+    audio_b64 = synthesize_speech(response_text)
+    return jsonify({"response": response_text, "audio": audio_b64})
 
 @app.route("/end", methods=["POST"])
 @login_required
@@ -192,7 +184,7 @@ def create_profile():
         "pronoun": profile_data.get("pronoun"),
         "communication-type": profile_data.get("communication-type"),
         "language-level": profile_data.get("language-level"),
-        "LevelAutism": int(profile_data.get("LevelAutism")) if profile_data.get("LevelAutism") else None,
+        "levelAutism": int(profile_data.get("levelAutism")) if profile_data.get("levelAutism") else None,
         "interests": profile_data.get("interests"),
         "sensory-auditory": profile_data.get("sensory-auditory"),
         "sensory-visual": profile_data.get("sensory-visual"),

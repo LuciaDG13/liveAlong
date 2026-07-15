@@ -10,7 +10,7 @@ def main():
     if not user_profile:
         return
 
-    exercise = get_exercise(theme, user_profile["LevelAutism"])
+    exercise = get_exercise(theme, user_profile["levelAutism"])
 
     session_id = create_session(user_id, theme)
 

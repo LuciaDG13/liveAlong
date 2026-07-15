@@ -20,15 +20,15 @@ def get_exercise(theme, LevelAutism):
 
     query = (
         exercises_ref
-        .where(filter=FieldFilter("Theme", "==", theme))
-        .where(filter=FieldFilter("LevelAutism", "==", LevelAutism))
+        .where(filter=FieldFilter("theme", "==", theme))
+        .where(filter=FieldFilter("levelAutism", "==", LevelAutism))
         .limit(1)
     )
     
     results = query.get()
     
     if results:
-        return results[0].to_dict()["Story"]
+        return results[0].to_dict()["story"]
     return None
 
 def create_user_profile(profile_data, user_id=None):
