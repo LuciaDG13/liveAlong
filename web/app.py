@@ -67,7 +67,7 @@ def start(current_user):
     user_id = current_user["uid"]
     theme = "Change of plans"
     user_profile = get_user_profile(user_id)
-    exercise = get_exercise(theme, user_profile["levelAutism"])
+    exercise = get_exercise(theme, user_profile["LevelAutism"])
     session_id = create_session(user_id, theme)
 
     session_state["session_id"] = session_id
@@ -192,7 +192,7 @@ def create_profile():
         "pronoun": profile_data.get("pronoun"),
         "communication-type": profile_data.get("communication-type"),
         "language-level": profile_data.get("language-level"),
-        "levelAutism": int(profile_data.get("levelAutism")) if profile_data.get("levelAutism") else None,
+        "LevelAutism": int(profile_data.get("LevelAutism")) if profile_data.get("LevelAutism") else None,
         "interests": profile_data.get("interests"),
         "sensory-auditory": profile_data.get("sensory-auditory"),
         "sensory-visual": profile_data.get("sensory-visual"),

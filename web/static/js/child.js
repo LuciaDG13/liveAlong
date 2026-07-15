@@ -81,7 +81,7 @@ document.getElementById("btn-home").onclick = () => {
 document.getElementById("btn-end-session").onclick = async () => {
     await endSession();
     childSessionEnded = true;
-    displayMessage("Bravo ! La session is finished.");
+    displayMessage("Congratulation! This session has ended");
     document.getElementById("btn-next").classList.add("hidden");
     document.getElementById("btn-back").classList.add("hidden");
     document.getElementById("btn-end-session").setAttribute("hidden", "");

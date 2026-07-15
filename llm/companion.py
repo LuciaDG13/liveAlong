@@ -75,7 +75,7 @@ def run_session(user_profile, exercise, conversation_history):
     
     Profile of the user:
     - Name : {user_profile["name"]}
-    - Level of autism : {user_profile["levelAutism"]}
+    - Level of autism : {user_profile["LevelAutism"]}
     - Sensory sensibilities : {", ".join(user_profile["sensory"])}
     - Interests : {", ".join(user_profile["interest"])}
     - Level of vocabulary : {user_profile["language"]}
@@ -197,7 +197,7 @@ def run_session(user_profile, exercise, conversation_history):
     
     Profile of the user:
     - Name : {user_profile["name"]}
-    - Level of autism : {user_profile["levelAutism"]}
+    - Level of autism : {user_profile["LevelAutism"]}
     - Sensory sensibilities : {", ".join(user_profile["sensory"])}
     - Interests : {", ".join(user_profile["interest"])}
     - Level of vocabulary : {user_profile["language"]}

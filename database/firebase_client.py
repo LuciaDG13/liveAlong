@@ -15,13 +15,13 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-def get_exercise(theme, levelAutism):
+def get_exercise(theme, LevelAutism):
     exercises_ref = db.collection("SocialStories")
 
     query = (
         exercises_ref
         .where(filter=FieldFilter("Theme", "==", theme))
-        .where(filter=FieldFilter("levelAutism", "==", levelAutism))
+        .where(filter=FieldFilter("LevelAutism", "==", LevelAutism))
         .limit(1)
     )
     

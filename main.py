@@ -10,13 +10,13 @@ def main():
     if not user_profile:
         return
 
-    exercise = get_exercise(theme, user_profile["levelAutism"])
+    exercise = get_exercise(theme, user_profile["LevelAutism"])
 
     session_id = create_session(user_id, theme)
 
     conversation_history = []
 
-    print("Début de la session.\n Lorsque vous souhaitez arrêter la session, écrivez 'fin'")
+    print("Beggining of the sessions.\n Write 'fin' to end it")
 
     # Premier message du LLM
     first_response = run_session(user_profile, exercise, conversation_history)
