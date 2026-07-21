@@ -37,9 +37,46 @@ def create_user_profile(profile_data, user_id=None):
     return profile_ref.id
 
 def get_all_profiles():
-    profiles_ref = db.collection("Profiles")
+    profiles_ref = db.collection("Profiles").where(filter=FieldFilter("role", "==", "child"))
     profiles = profiles_ref.stream()
     return [{"id": profile.id, "name": profile.to_dict().get("name")} for profile in profiles]
+
+
+def get_profile_by_id(profile_id):
+    profile_ref = db.collection("Profiles").document(profile_id)
+    profile_doc = profile_ref.get()
+    if not profile_doc.exists:
+        return None
+
+    profile = profile_doc.to_dict() or {}
+    profile["id"] = profile_id
+    return profile
+
+
+def get_sessions_for_user(user_id):
+    sessions_ref = db.collection("Sessions").where(filter=FieldFilter("user_id", "==", user_id))
+    sessions = []
+
+    for session_doc in sessions_ref.stream():
+        session_data = session_doc.to_dict() or {}
+        session_data["id"] = session_doc.id
+
+        messages = []
+        for message_doc in session_doc.reference.collection("messages").stream():
+            message = message_doc.to_dict() or {}
+            message["id"] = message_doc.id
+            messages.append(message)
+
+        messages.sort(key=lambda message: str(message.get("timeStamp", "")))
+        session_data["messages"] = messages
+        sessions.append(session_data)
+
+    sessions.sort(key=lambda session: (
+        str(session.get("date", "")),
+        str(session.get("end_time", ""))
+    ))
+    return sessions
+
 
 def create_session(user_id, theme):
     session_ref = db.collection("Sessions").document()

@@ -32,7 +32,7 @@
         <main class="responsive-wrapper">
             <h1 class="page-title">Select Profile</h1>
 
-            <div class="form-group">
+            <div class="form-group" id="profile-search-wrapper">
                 <label for="profile-search">Search by name:</label>
                 <input
                     type="text"
@@ -46,7 +46,15 @@
             <div id="profile-list" class="profile-list" aria-live="polite">
                 <p class="profile-list-message">Loading profiles...</p>
             </div>
+
+            <section id="profile-detail" class="profile-detail hidden" aria-live="polite">
+                <p class="profile-list-message">Select a profile to view its recap and conversation history.</p>
+            </section>
         </main>
+
+        <button type="button" id="btn-scroll-top" class="btn-scroll-top hidden" aria-label="Back to top">
+            <i class="bi bi-arrow-up"></i>
+        </button>
 
         <script src="../static/js/select-profile.js"></script>
         <script type="module" src="../static/js/auth.js"></script>

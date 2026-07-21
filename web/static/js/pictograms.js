@@ -48,7 +48,6 @@ function renderGrid() {
         const p = document.createElement("p");
         p.textContent = pictograms[i].label;
         div.appendChild(p);
-
         div.addEventListener("click", function() {
             addToSelection(pictograms[i]);
         });

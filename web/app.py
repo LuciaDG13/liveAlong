@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from firebase_admin import auth
 from flask import Flask, render_template, request, jsonify, make_response, send_file, jsonify
-from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles
+from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles, get_profile_by_id, get_sessions_for_user
 from user_profiles.user_profile import get_user_profile
 from llm.companion import run_session, analyze_session, consolidate_profile
 from llm.tts_service import synthesize_speech
@@ -19,8 +19,6 @@ whisper_model = WhisperModel("base.en", device="cuda", compute_type="float16")
 
 app = Flask(__name__)
 
-# Variables globales simples pour garder l'état de la session en cours
-# (suffisant pour une démo avec un seul enfant à la fois)
 session_state = {
     "session_id": None,
     "user_profile": None,
@@ -176,8 +174,9 @@ def create_profile():
     if request.method == "GET":
         return render_template("creation-profile.html")
     
-    profile_data = request.json  # Récupère le dictionnaire envoyé depuis le formulaire
+    profile_data = request.json
     mapped_data = {
+        "role": "child",
         "name": profile_data.get("name"),
         "date_of_birth": profile_data.get("date_of_birth"),
         "gender": profile_data.get("gender"),
@@ -261,6 +260,21 @@ def get_profiles(current_user):
         return jsonify({"error": "Unauthorized"}), 403
     profiles = get_all_profiles()
     return jsonify({"profiles": profiles})
+
+
+@app.route("/api/profiles/<profile_id>/details", methods=["GET"])
+@login_required
+def get_profile_details(current_user, profile_id):
+    if current_user["role"] != "therapist":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    profile = get_profile_by_id(profile_id)
+    if not profile:
+        return jsonify({"error": "Profile not found"}), 404
+
+    sessions = get_sessions_for_user(profile_id)
+    return jsonify({"profile": profile, "sessions": sessions})
+
 
 @app.route("/therapist/profiles")
 def select_profile():

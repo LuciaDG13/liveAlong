@@ -29,6 +29,8 @@ body {
     line-height: 1.5;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    padding-top: var(--header-height);
 }
 
 /* Conteneur fluide réutilisable */
@@ -42,19 +44,22 @@ body {
 /* --- LE NOUVEAU BANDEAU (HEADER PRO) --- */
 .header-outer {
     height: var(--header-height);
-    background-color: var(--color-surface);
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
     border-bottom: 1.5px solid var(--border-color);
     box-shadow: var(--shadow);
     display: flex;
     align-items: center;
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
 .header-inner {
     width: 100%;
-    height: var(--header-inner-height);
+    height: 100%;
     margin: 0 auto;
     padding: 0 20px; 
     align-items: center;

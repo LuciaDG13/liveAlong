@@ -1,5 +1,14 @@
 let childSessionEnded = false;
 
+// Ajouter un script pour avatar-speech-sync
+// Il faudra ajouter un id="avatar-mouth" et un id="avatar-audio"
+
+const avatarMouthEl = document.getElementById("avatar-mouth");
+const avatarAudioEl = document.getElementById("avatar-audio");
+const avatarPlayer = (avatarMouthEl && avatarAudioEl)
+    ? new AvatarSpeechPlayer(avatarMouthEl, avatarAudioEl)
+    : null;
+
 function endChildSessionAndRedirect(targetUrl = "/") {
     if (childSessionEnded) {
         window.location.assign(targetUrl);
@@ -35,11 +44,22 @@ function displayMessage(text) {
 }
 function renderAIResponse(data) {
     displayMessage(data.response);
-    if (data.audio) {
-        const audio = new Audio("data:audio/wav;base64," + data.audio);
+    if (!data.audio) return;
+
+    const audioSrc = "data:audio/wav;base64," + data.audio;
+
+    if (avatarPlayer && data.mouthCues) {
+        // Chemin complet : audio + lip-sync précis (mouthCues fournis par le backend)
+        avatarAudioEl.src = audioSrc;
+        avatarPlayer.loadRhubarbCues({ mouthCues: data.mouthCues });
+        avatarPlayer.play();
+    } else {
+        // Repli : pas encore de mouthCues (ou avatar absent de la page) -> comportement d'origine
+        const audio = new Audio(audioSrc);
         audio.play();
     }
 }
+
 
 document.getElementById("button-confirm-pict").onclick = async () => {
     const imgs = document.querySelectorAll("#selected-pictograms img");

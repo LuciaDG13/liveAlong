@@ -7,6 +7,12 @@
     padding-bottom: 30px;
 }
 
+.profile-list.hidden,
+#profile-search-wrapper.hidden,
+.profile-detail.hidden {
+    display: none;
+}
+
 .profile-card {
     display: flex;
     align-items: center;
@@ -37,8 +43,177 @@
     font-weight: bold;
 }
 
+.btn-scroll-top {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: #ffffff;
+    box-shadow: 0 10px 24px rgba(44, 82, 130, 0.22);
+    cursor: pointer;
+    z-index: 1200;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-scroll-top:hover {
+    transform: translateY(-2px);
+    background: #3c5e55;
+}
+
+.btn-scroll-top.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .profile-list-message {
     color: #6b7785;
     font-size: 0.95rem;
     padding: 16px 0;
+}
+
+.profile-detail {
+    display: grid;
+    gap: 18px;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.profile-detail.hidden {
+    display: none;
+}
+
+.profile-detail-card,
+.conversation-card,
+.phone-session-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 24px rgba(44, 82, 130, 0.07);
+}
+
+.profile-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #edf1f5;
+}
+
+.profile-detail-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #d7e0e8;
+    background: #f8fbfd;
+    color: #2c3e50;
+    cursor: pointer;
+}
+
+.profile-detail-back:hover {
+    background: #edf5fb;
+}
+
+.profile-detail-title {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+.profile-detail-table-wrapper {
+    overflow-x: auto;
+}
+
+.profile-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.profile-detail-table th,
+.profile-detail-table td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid #edf1f5;
+    vertical-align: top;
+}
+
+.profile-detail-table th {
+    width: 220px;
+    color: #58708a;
+    font-weight: 700;
+}
+
+.phone-session-card {
+    margin-top: 12px;
+}
+
+.phone-session-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: #58708a;
+}
+
+.phone-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    background: linear-gradient(180deg, #f7f9fb, #eef4f8);
+    border-radius: 14px;
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.phone-message-row {
+    display: flex;
+}
+
+.phone-message-row:last-child {
+    margin-bottom: 0;
+}
+
+.phone-bubble {
+    max-width: 82%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.06);
+}
+
+.phone-bubble.assistant {
+    background: #dff2ea;
+    color: #214338;
+    border-bottom-left-radius: 4px;
+}
+
+.phone-bubble.user {
+    margin-left: auto;
+    background: #e8f0fb;
+    color: #20324e;
+    border-bottom-right-radius: 4px;
+}
+
+.phone-role {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
