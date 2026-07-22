@@ -7,11 +7,12 @@ from flask import Flask, render_template, request, jsonify, make_response, send_
 from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles, get_profile_by_id, get_sessions_for_user
 from user_profiles.user_profile import get_user_profile
 from llm.companion import run_session, analyze_session, consolidate_profile
-from llm.tts_service import synthesize_speech
+from llm.lip_sync import synthesize_speech_with_lip_sync
 import secrets
 from web.auth import login_required, page_login_required
 from datetime import timedelta
 from faster_whisper import WhisperModel
+
 
 SESSION_EXPIRES_IN= timedelta(days=3)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -75,8 +76,12 @@ def start(current_user):
     save_message(session_id, "assistant", first_response)
     session_state["conversation_history"].append({"role": "assistant", "parts": first_response})
 
-    audio_b64 = synthesize_speech(first_response)
-    return jsonify({"response": first_response, "audio": audio_b64})
+    speech = synthesize_speech_with_lip_sync(first_response)
+    return jsonify({
+        "response": first_response,
+        "audio": speech["audio"],
+        "mouthCues": speech["mouthCues"]
+    })
 
 @app.route("/message", methods=["POST"])
 @login_required
@@ -86,20 +91,25 @@ def message(current_user):
 
     user_input = request.json.get("message")
 
-    save_message(session_state["session_id"], "user", user_input)
-    session_state["conversation_history"].append({"role": "user", "parts": user_input})
+    save_message(session_state["session_id"], "assistant", user_input)
+    session_state["conversation_history"].append({"role": "assistant", "parts": user_input})
 
-    response = run_session(
+    response_text = run_session(
         session_state["user_profile"],
         session_state["exercise"],
         session_state["conversation_history"]
     )
 
-    save_message(session_state["session_id"], "assistant", response)
-    session_state["conversation_history"].append({"role": "assistant", "parts": response})
+    save_message(session_state["session_id"], "assistant", response_text)
+    session_state["conversation_history"].append({"role": "assistant", "parts": response_text})
 
-    audio_b64 = synthesize_speech(response)
-    return jsonify({"response": response, "audio": audio_b64})
+    speech = synthesize_speech_with_lip_sync(response_text)
+    return jsonify({
+        "user_input": user_input,
+        "response": response_text,
+        "audio": speech["audio"],
+        "mouthCues": speech["mouthCues"]
+    })
 
 @app.route("/message_voice", methods=["POST"])
 @login_required
@@ -136,8 +146,13 @@ def message_voice(current_user):
     save_message(session_state["session_id"], "assistant", response_text)
     session_state["conversation_history"].append({"role": "assistant", "parts": response_text})
 
-    audio_b64 = synthesize_speech(response_text)
-    return jsonify({"response": response_text, "audio": audio_b64})
+    speech = synthesize_speech_with_lip_sync(response_text)
+    return jsonify({
+        "user_input": user_input,
+        "response": response_text,
+        "audio": speech["audio"],
+        "mouthCues": speech["mouthCues"]
+    })
 
 @app.route("/end", methods=["POST"])
 @login_required
@@ -152,6 +167,15 @@ def end(current_user):
         session_state["conversation_history"],
         session_state["theme"]
     )
+    
+    consolidated_profile = consolidate_profile(session_state["user_profile"], insights)
+    update_profile_insights(
+    current_user["user_id"],
+    session_state["theme"],
+    insights,
+    consolidated_profile
+    )
+
     session_state.update({
         "session_id": None,
         "user_profile": None,
@@ -159,13 +183,6 @@ def end(current_user):
         "theme": None,
         "conversation_history": []
     })
-    consolidated_profile = consolidate_profile(session_state["user_profile"], insights)
-    update_profile_insights(
-    current_user["user_id"],
-    session_state["theme"],
-    insights,
-    consolidated_profile
-)
 
     return jsonify({"status": "session terminée"})
 

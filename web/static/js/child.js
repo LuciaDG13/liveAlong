@@ -9,6 +9,9 @@ const avatarPlayer = (avatarMouthEl && avatarAudioEl)
     ? new AvatarSpeechPlayer(avatarMouthEl, avatarAudioEl)
     : null;
 
+function logConsole(label, text) {
+    console.log(`%c[LiveAlong] ${label} :`, "color:#4A7569;font-weight:bold;", text);
+}
 function endChildSessionAndRedirect(targetUrl = "/") {
     if (childSessionEnded) {
         window.location.assign(targetUrl);
@@ -39,11 +42,12 @@ document.addEventListener("DOMContentLoaded", async function() {
     showMessageState();
 });
 
-function displayMessage(text) {
+/* function displayMessage(text) {
     document.getElementById("last-message").textContent = text;
-}
+} */
 function renderAIResponse(data) {
-    displayMessage(data.response);
+    /* displayMessage(data.response); */
+    logConsole("Reponse de l'IA: ", data.response)
     if (!data.audio) return;
 
     const audioSrc = "data:audio/wav;base64," + data.audio;
@@ -65,6 +69,7 @@ document.getElementById("button-confirm-pict").onclick = async () => {
     const imgs = document.querySelectorAll("#selected-pictograms img");
     const labels = Array.from(imgs).map(img => img.alt);
     const messageText = labels.join(", "); // ex: "Happy, Sad"
+    logConsole("Message envoyé (pictogrammes)", messageText);
     const data = await sendMessage(messageText);
     renderAIResponse(data);
     showMessageState();
@@ -107,7 +112,8 @@ document.getElementById("btn-home").onclick = () => {
 document.getElementById("btn-end-session").onclick = async () => {
     await endSession();
     childSessionEnded = true;
-    displayMessage("Congratulation! This session has ended");
+    /* displayMessage("Congratulation! This session has ended"); */
+    logConsole("Session", "Session terminée");
     document.getElementById("btn-next").classList.add("hidden");
     document.getElementById("btn-back").classList.add("hidden");
     document.getElementById("btn-end-session").setAttribute("hidden", "");

@@ -80,6 +80,9 @@ startButton.onclick = async () => {
                 });
 
                 const data = await response.json();
+                if (data.user_input) {
+                console.log("%c[LiveAlong] Transcription reconnue :", "color:#4A7569;font-weight:bold;", data.user_input);
+}
                 renderAIResponse(data);
                 showMessageState();
             } catch (error) {
