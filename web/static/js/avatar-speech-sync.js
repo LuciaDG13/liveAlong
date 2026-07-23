@@ -4,22 +4,14 @@
 // dans le même repère que le fichier avatar-enfant-tsa.html
 // (bouche centrée autour de x=150, y=185-195).
 const RHUBARB_MOUTHS = {
-  // A : bouche fermée (M, B, P, silence)
-  A: `<path d="M124,188 Q150,192 176,188" stroke="#3A2E22" stroke-width="6" fill="none" stroke-linecap="round"/>`,
-  // B : légèrement entrouverte (K, S, T, consonnes serrées)
-  B: `<path d="M126,186 Q150,196 174,186 Q150,190 126,186 Z" fill="#3A2E22"/>`,
-  // C : ouverte moyenne (E, AE)
-  C: `<path d="M120,182 Q150,206 180,182 Q150,196 120,182 Z" fill="#3A2E22"/>`,
-  // D : grande ouverture (AA, O, exclamation)
-  D: `<ellipse cx="150" cy="190" rx="16" ry="20" fill="#3A2E22"/>`,
-  // E : bouche arrondie moyenne (O court, ER)
-  E: `<ellipse cx="150" cy="188" rx="12" ry="14" fill="#3A2E22"/>`,
-  // F : lèvres resserrées en avant (OU, W)
-  F: `<ellipse cx="150" cy="188" rx="8" ry="9" fill="#3A2E22"/>`,
-  // X : position de repos (pause dans la parole)
-  X: `<path d="M126,187 Q150,190 174,187" stroke="#3A2E22" stroke-width="5" fill="none" stroke-linecap="round"/>`
+  A: `<path d="M126,188 Q150,190 174,188" style="stroke:var(--avatar-outline);stroke-width:5;fill:none" stroke-linecap="round"/>`,
+  B: `<path d="M128,183 Q150,189 172,183 Q150,195 128,183 Z" style="stroke:var(--avatar-outline);fill:var(--avatar-mouth-interior)"/>`,
+  C: `<path d="M124,178 Q150,169 176,178 Q150,203 124,178 Z" style="stroke:var(--avatar-outline);fill:var(--avatar-mouth-interior)"/>`,
+  D: `<path d="M120,170 Q150,155 180,170 Q150,224 120,170 Z" style="stroke:var(--avatar-outline);fill:var(--avatar-mouth-interior-dark)"/>`,
+  E: `<path d="M126,180 Q150,173 174,180 Q150,199 126,180 Z" style="stroke:var(--avatar-outline);fill:var(--avatar-mouth-interior)"/>`,
+  F: `<path d="M138,183 Q150,178 162,183 Q150,196 138,183 Z" style="stroke:var(--avatar-outline);fill:var(--avatar-mouth-interior)"/>`,
+  X: `<path d="M126,187 Q150,190 174,187" style="stroke:var(--avatar-outline);stroke-width:5;fill:none" stroke-linecap="round"/>`
 };
-
 // --- 2. Lecteur synchronisé --------------------------------------------
 class AvatarSpeechPlayer {
   /**

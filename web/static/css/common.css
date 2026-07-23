@@ -10,6 +10,12 @@
     --border-color: rgba(74, 117, 105, 0.15);
     --shadow: 0 4px 12px rgba(40, 60, 55, 0.05);
     --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --avatar-skin: #F1C199;
+    --avatar-outline: #3A2E22;
+    --avatar-mouth-interior: #A8574C;
+    --avatar-mouth-interior-dark: #8C453B;
+    --avatar-tongue: #C97B72;
+    --avatar-teeth: var(--color-background);
 }
 
 * {

@@ -9,24 +9,32 @@ import json
 
 """ client = genai.Client(api_key=API_KEY) """
 
-# Loading of the model
-tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
+MODEL_AVAILABLE = False
+tokenizer = None
+model = None
 
-quantization_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_compute_dtype=torch.bfloat16,
-    bnb_4bit_quant_type="nf4"
-)
+try:
+    # Loading of the model
+    tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
 
-base_model = AutoModelForCausalLM.from_pretrained(
-    LLM_MODEL,
-    quantization_config=quantization_config,
-    device_map="auto"
-)
+    quantization_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_quant_type="nf4"
+    )
 
-model = PeftModel.from_pretrained(base_model, LORA_PATH)
-model.eval()
+    base_model = AutoModelForCausalLM.from_pretrained(
+        LLM_MODEL,
+        quantization_config=quantization_config,
+        device_map="auto"
+    )
 
+    model = PeftModel.from_pretrained(base_model, LORA_PATH)
+    model.eval()
+    MODEL_AVAILABLE = True
+except Exception as exc:
+    print(f"Unable to load LLM model: {exc}")
+    MODEL_AVAILABLE = False
 
 
 def build_insights_summary(user_profile):
@@ -299,6 +307,9 @@ def run_session(user_profile, exercise, conversation_history):
 
 
 def analyze_session(user_profile, conversation_history, theme):
+    if not MODEL_AVAILABLE:
+        return None
+
     conversation_text = "\n".join([
         f"{'LiveAlong' if msg['role'] == 'assistant' else user_profile['name']}: {msg['parts']}"
         for msg in conversation_history
@@ -350,6 +361,13 @@ def analyze_session(user_profile, conversation_history, theme):
         return None
 
 def consolidate_profile(user_profile, new_insights):
+    if not MODEL_AVAILABLE:
+        return user_profile.get("consolidated_profile", {
+            "stable_traits": [],
+            "emerging_difficulties": [],
+            "resolved_difficulties": []
+        })
+
     if not new_insights:
         return user_profile.get("consolidated_profile", {
             "stable_traits": [],

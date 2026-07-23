@@ -8,13 +8,12 @@ from pathlib import Path
 from llm import tts_service
 
 
-RHUBARB_PATH = "rhubarb"
-""" A changer avec le vrai chemin """
+RHUBARB_PATH = r"C:\Users\ISK26RA1001\Documents\livealong\liveAlong\rhubarb\Rhubarb-Lip-Sync-1.14.0-Windows\rhubarb.exe"
 
 def synthesize_speech_with_lip_sync (text: str) -> dict:
     audio_b64 = tts_service.synthesize_speech(text)
-    if not audio_b64: 
-        return {"audio":None, "mouthCues": []}
+    if not audio_b64:
+        return {"audio": None, "mouthCues": []}
 
     tmp_dir = Path(tempfile.gettempdir())
     job_id = uuid.uuid4().hex

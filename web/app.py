@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from firebase_admin import auth
@@ -12,6 +13,8 @@ import secrets
 from web.auth import login_required, page_login_required
 from datetime import timedelta
 from faster_whisper import WhisperModel
+from avatar_service import generate_avatar_svg
+
 
 
 SESSION_EXPIRES_IN= timedelta(days=3)
@@ -78,9 +81,10 @@ def start(current_user):
 
     speech = synthesize_speech_with_lip_sync(first_response)
     return jsonify({
-        "response": first_response,
-        "audio": speech["audio"],
-        "mouthCues": speech["mouthCues"]
+    "response": first_response,
+    "audio": speech["audio"],
+    "mouthCues": speech["mouthCues"],
+    "avatar_svg": user_profile.get("avatar_svg")
     })
 
 @app.route("/message", methods=["POST"])
@@ -213,6 +217,12 @@ def create_profile():
         "triggers": profile_data.get("triggers"),
         "email": profile_data.get("email")
     }
+
+    avatar_options_raw = profile_data.get("avatar-options")
+    avatar_options = json.loads(avatar_options_raw) if avatar_options_raw else {}
+    avatar_seed = profile_data.get("avatar-seed") or profile_data.get("name", "default")
+    mapped_data["avatar_svg"] = generate_avatar_svg(avatar_seed, avatar_options)
+
     password = secrets.token_urlsafe(12)
     email= profile_data.get("email")
 

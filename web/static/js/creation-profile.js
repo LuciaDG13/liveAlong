@@ -1,3 +1,7 @@
+import { Style, Avatar } from 'https://cdn.jsdelivr.net/npm/@dicebear/core@10/+esm';
+import definition from 'https://cdn.jsdelivr.net/npm/@dicebear/styles@10/big-smile.json' with { type: 'json' };
+
+const avatarStyle = new Style(definition);
 const STEP_ACTIVE_CLASS = "step-active";
 const DOT_ACTIVE_CLASS = "active";
 const HIDDEN_BTN_CLASS = "hidden-btn";
@@ -35,6 +39,13 @@ function goToTherapistPage() {
     if (confirmLeavePage()) {
         window.location.assign("/therapist");
     }
+}
+
+function renderAvatarPreview(seed) {
+    const avatar = new Avatar(avatarStyle, { seed, mouthVariant: [] });
+    document.getElementById("avatar-preview").innerHTML = avatar.toString();
+    document.getElementById("avatar-seed").value = seed;
+    document.getElementById("avatar-options").value = JSON.stringify({});
 }
 
 function updateForm() {
@@ -128,6 +139,12 @@ btnNext.addEventListener("click", () => {
         }
     }
 });
+
+document.getElementById("btn-randomize-avatar")?.addEventListener("click", () => {
+    renderAvatarPreview(Math.random().toString(36).substring(2, 10));
+});
+
+renderAvatarPreview(Math.random().toString(36).substring(2, 10));
 
 btnBack.addEventListener("click", () => {
     if (currentStep > 0) {

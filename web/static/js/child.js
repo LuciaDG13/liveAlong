@@ -38,9 +38,23 @@ document.addEventListener("DOMContentLoaded", async function() {
     renderGrid();
     const userId = sessionStorage.getItem("selected_user_id");
     const data = await startSession(userId);
+    renderAvatar(data.avatar_svg);
     renderAIResponse(data);
     showMessageState();
 });
+
+function renderAvatar(avatarSvg) {
+    if (!avatarSvg) return;
+    const container = document.getElementById("avatar-container");
+    const audioEl = document.getElementById("avatar-audio");
+    container.innerHTML = avatarSvg;
+    container.appendChild(audioEl); // remis en place après innerHTML
+
+    const svgEl = container.querySelector("svg");
+    const mouthGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    mouthGroup.setAttribute("id", "avatar-mouth");
+    svgEl.appendChild(mouthGroup);
+}
 
 /* function displayMessage(text) {
     document.getElementById("last-message").textContent = text;

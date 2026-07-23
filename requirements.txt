@@ -73,6 +73,12 @@ msgpack==1.2.0
 CacheControl==0.14.4
 pyparsing==3.3.2
 docstring_parser==0.18.0
+python-dotenv==1.0.1
+sendgrid==6.11.0
+faster-whisper
+soundfile==0.12.1
+kokoro
+numpy
 
 # ─── Cryptographie / auth ────────────────────────────────────
 cryptography==49.0.0

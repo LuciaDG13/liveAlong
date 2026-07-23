@@ -4,12 +4,20 @@ import numpy as np
 import soundfile as sf
 from kokoro import KPipeline
 
-pipeline = KPipeline(lang_code='a')
-
+pipeline = None
 SAMPLE_RATE = 24000
+
+try:
+    pipeline = KPipeline(lang_code='a')
+except Exception as exc:
+    print(f"Unable to initialize TTS pipeline: {exc}")
+
 
 def synthesize_speech(text):
     if not text or not text.strip():
+        return None
+
+    if pipeline is None:
         return None
 
     try:
