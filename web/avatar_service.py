@@ -2,7 +2,7 @@ from importlib.resources import files
 from dicebear import Avatar, Style
 
 _style = Style.from_json(
-    files("dicebear_styles").joinpath("big-smie.json").read_text("utf-8")
+    files("dicebear_styles").joinpath("big-smile.json").read_text("utf-8")
 )
 
 def generate_avatar_svg(seed, options=None):

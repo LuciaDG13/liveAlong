@@ -217,3 +217,23 @@
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
+
+.profile-detail-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #F5D2D5;
+    background: #fff;
+    color: #721C24;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.profile-detail-delete:hover {
+    background: #D66262;
+    border-color: #D66262;
+    color: #ffffff;
+}

@@ -18,7 +18,7 @@ function addToSelection(pictogram) {
     const deja = selection.querySelectorAll("img").length;
     if (deja>=5) return;
     if (deja==0) {
-        document.getElementById("buttons-pict").removeAttribute("hidden");
+        document.getElementById("buttons-pict").classList.add("visible");
     }
     
     const img = document.createElement("img");

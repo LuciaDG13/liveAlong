@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from firebase_admin import auth
 from flask import Flask, render_template, request, jsonify, make_response, send_file, jsonify
-from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles, get_profile_by_id, get_sessions_for_user
+from database.firebase_client import get_exercise, create_session, save_message, close_session, update_profile_insights, create_user_profile, create_auth_account, send_temp_password, get_all_profiles, get_profile_by_id, get_sessions_for_user, update_avatar, delete_child_profile
 from user_profiles.user_profile import get_user_profile
 from llm.companion import run_session, analyze_session, consolidate_profile
 from llm.lip_sync import synthesize_speech_with_lip_sync
@@ -188,7 +188,15 @@ def end(current_user):
         "conversation_history": []
     })
 
-    return jsonify({"status": "session terminée"})
+    farewell_text = "See you later!"
+    speech = synthesize_speech_with_lip_sync(farewell_text)
+
+    return jsonify({
+    "status": "session terminée",
+    "response": farewell_text,
+    "audio": speech["audio"],
+    "mouthCues": speech["mouthCues"]
+})
 
 @app.route("/therapist/create_profile", methods=["GET", "POST"])
 def create_profile():
@@ -221,7 +229,8 @@ def create_profile():
     avatar_options_raw = profile_data.get("avatar-options")
     avatar_options = json.loads(avatar_options_raw) if avatar_options_raw else {}
     avatar_seed = profile_data.get("avatar-seed") or profile_data.get("name", "default")
-    mapped_data["avatar_svg"] = generate_avatar_svg(avatar_seed, avatar_options)
+    mapped_data["avatar_svg"] = None
+    mapped_data["avatar_customized"] = False
 
     password = secrets.token_urlsafe(12)
     email= profile_data.get("email")
@@ -253,6 +262,7 @@ def verify_token():
         uid = decoded_token.get("uid")
         user_profile = get_user_profile(uid)
         name = user_profile.get("name") if user_profile else None
+        avatar_customized = user_profile.get("avatar_customized", False) if user_profile else False
         print("Le nom est ", name) 
         '''Debugging line'''
     except Exception:
@@ -260,7 +270,7 @@ def verify_token():
     if decoded_token.get("role") == "therapist":
         redirect_url= "/therapist"
     elif decoded_token.get("role") == "child":
-        redirect_url= "/child_interface"
+        redirect_url = "/child_interface" if avatar_customized else "/child_interface/avatar-setup"
     else:
         return jsonify({"error": "Invalid role"}), 403
     
@@ -302,10 +312,38 @@ def get_profile_details(current_user, profile_id):
     sessions = get_sessions_for_user(profile_id)
     return jsonify({"profile": profile, "sessions": sessions})
 
+@app.route("/therapist/delete_profile/<profile_id>", methods=["POST"])
+@login_required
+def delete_profile(current_user, profile_id):
+    if current_user["role"] != "therapist":
+        return jsonify({"error": "Unauthorized"}), 403
+    try:
+        delete_child_profile(profile_id)
+    except Exception as e:
+        print(f"Error deleting profile {profile_id}: {e}")
+        return jsonify({"error": "Failed to delete profile"}), 500
+    return jsonify({"status": "deleted"})
 
 @app.route("/therapist/profiles")
 def select_profile():
     return render_template("select-profile.html")
+
+@app.route("/child_interface/avatar-setup")
+@page_login_required
+def avatar_setup(current_user):
+    if current_user["role"] != "child":
+        return jsonify({"error": "Unauthorized"}), 403
+    return render_template("avatar-setup.html")
+
+@app.route("/api/avatar/save", methods=["POST"])
+@login_required
+def save_avatar(current_user):
+    if current_user["role"] != "child":
+        return jsonify({"error": "Unauthorized"}), 403
+    options = request.json.get("options", {})
+    avatar_svg = generate_avatar_svg(options.get("seed", current_user["uid"]), options)
+    update_avatar(current_user["uid"], avatar_svg, options)
+    return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)

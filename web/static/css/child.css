@@ -10,105 +10,64 @@
  * .hidden utilise visibility:hidden (pas display:none) pour que
  * la zone reste dans le flux et ne fasse pas bouger les autres éléments.
  */
-
 #main-area {
-	position: relative;
-	flex: 1;          /* prend tout l'espace entre le header et la barre du bas */
-	overflow: hidden;
-	min-height: 0;    /* nécessaire pour que flex+overflow fonctionne */
-}
-
-#chat-box,
-#response-zone {
-	position: absolute;
-	inset: 0; /* top:0 right:0 bottom:0 left:0 */
+	flex: 1;
 	display: flex;
 	flex-direction: column;
+	min-height: 0;
 	overflow: hidden;
-	transition: visibility 0s, opacity 0.15s ease;
 }
 
-/* État visible */
-#chat-box,
-#response-zone {
-	visibility: visible;
-	opacity: 1;
-	pointer-events: auto;
-}
+/* ─── Zone avatar (haut) ─────────────────────────────────────── */
 
-/* État caché : la zone reste en place, rien ne bouge */
-#chat-box.hidden,
-#response-zone.hidden {
-	visibility: hidden;
-	opacity: 0;
-	pointer-events: none;
-}
-
-/* ─── Chat box ───────────────────────────────────────────────── */
-
-#chat-box {
+#avatar-zone {
+	flex-shrink: 0;
+	display: flex;
+	justify-content: center;
+	padding: 16px;
 	background: #FFFFFF;
 	border-bottom: 1px solid #E2DED3;
-	align-items: flex-start;
-	justify-content: flex-start;
-	padding: 20px;
-	overflow-y: auto;
 }
 
-/* #last-message {
-	position: relative;
-	background: #E1F5EE;
-	border-radius: 12px;
-	padding: 16px 20px;
-	max-width: 80%;
-	font-size: 1.2rem;
-	margin-top: 0.5rem;
-	max-height: 150px;
-	overflow-y: auto;
+#avatar-container {
+	width: 160px;
+	height: 160px;
 }
 
-#last-message::after {
-	content: "";
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	left: -20px;
-	width: 0;
-	height: 0;
-	border-top: 10px solid transparent;
-	border-bottom: 10px solid transparent;
-	border-right: 10px solid #E1F5EE;
-} */
-
-/* ─── Response zone ──────────────────────────────────────────── */
-
-#response-zone {
-	background: #f2f5f7;
+#avatar-container svg {
+	width: 100%;
+	height: 100%;
+	display: block;
 }
 
-#response-top {
-	height: 260px;
+/* ─── Zone micro (milieu) ────────────────────────────────────── */
+
+#mic-zone {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-	padding: 10px;
+	align-items: center;
+	gap: 10px;
+	padding: 14px;
+	background: #f7f9fb;
 	border-bottom: 1px solid #E2DED3;
-	background: #FFFFFF;
 }
 
 #selected-pictograms {
-	flex: 1;
-	min-height: 70px;
+	width: 100%;
+	min-height: 44px;
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	gap: 4px;
-	overflow-y: auto;
 }
 
-#response-bottom {
+/* ─── Zone pictogrammes (bas, défilante) ─────────────────────── */
+
+#pictogram-zone {
 	flex: 1;
 	overflow-y: auto;
-	padding: 10px;
+	min-height: 0;
 }
 
 /* ─── Pictogrammes ───────────────────────────────────────────── */
@@ -148,7 +107,7 @@
     height: 80px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 0 24px;
     background: var(--color-surface);
     border-top: 2px solid rgba(74, 117, 105, 0.15);
@@ -157,38 +116,11 @@
 }
 
 
-/* Groupe gauche : flèche retour */
-#nav-left {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
 /* Groupe centre : End + Home */
 #nav-center {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-}
-
-/* Groupe droite : flèche suivant */
-#nav-right {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-/* Flèches de navigation */
-#btn-next,
-#btn-back {
-	background: none;
-	border: none;
-	cursor: pointer;
-	font-size: 2rem;
-	color: var(--color-accent);
-	line-height: 1;
-	padding: 4px;
-	transition: opacity 0.15s;
 }
 
 #btn-next:hover,
@@ -219,6 +151,12 @@
 	transition: background-color 0.3s;
 	background-color: #E1F5EE;
 }
+
+#btn-end-session:disabled {
+	opacity: 0.7;
+	cursor: default;
+}
+
 
 #btn-end-session:hover {
 	background-color: #d4edda;
@@ -254,7 +192,15 @@
 	display: flex;
 	justify-content: center;
 	gap: 10px;
-	margin: 6px 0;
+	height: 56px;              /* espace toujours réservé, même invisible */
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+#buttons-pict.visible {
+	visibility: visible;
+	opacity: 1;
 }
 
 /* ─── Micro ──────────────────────────────────────────────────── */
@@ -269,26 +215,40 @@
 	margin: 0 auto;
 }
 
-/* ─── Preview voix ───────────────────────────────────────────── */
-
-#preview-voice {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background: white;
-	padding: 16px;
-	border-top: 2px solid #E1F5EE;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 12px;
-	z-index: 100;
-	box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-}
-
 /* ─── Utilitaire hidden (UNIQUEMENT pour les éléments hors chat/response) ── */
 
 .hidden {
 	display: none !important;
 }
+
+#avatar-container {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 16px;
+}
+
+#avatar-container svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#end-screen {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+	padding: 24px;
+	text-align: center;
+	background: #f7f9fb;
+}
+
+#end-screen-message {
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: var(--color-accent);
+	margin: 0;
+}
+

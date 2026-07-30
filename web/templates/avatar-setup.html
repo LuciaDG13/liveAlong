@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveAlong</title>
+    <link href="../static/css/common.css" rel="stylesheet">
+    <link href="../static/css/avatar-setup.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="../static/icons/robot.svg">
+</head>
+<body>
+    <header class="header-outer">
+        <div class="header-inner responsive-wrapper">
+            <div class="header-left">
+                <a href="/" class="header-back" data-confirm-logout="true" aria-label="Log out and return to login">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div class="header-logo">
+                    <a href="#" id="link-logo"><img src="../static/images/illustration_robot.png" alt="Logo"></a>
+                </div>
+                <h1 class="header-name-appli">LiveAlong</h1>
+            </div>
+            <div class="header-user-status">
+                <span id="user-display-name" class="user-name">Loading...</span>
+                <button type="button" id="btn-logout" class="btn-logout">Log out</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="avatar-fixed-wrap">
+        <h1 class="page-title">Choose your avatar !</h1>
+        <div id="avatar-preview" class="avatar-preview-box"></div>
+    </div>
+
+    <main class="responsive-wrapper">
+        <section class="avatar-option-group">
+            <h2>Coiffure</h2>
+            <div id="hair-row" class="swatch-row"></div>
+        </section>
+
+        <section class="avatar-option-group">
+            <h2>Hair Color</h2>
+            <div id="haircolor-row" class="swatch-row"></div>
+        </section>
+
+        <section class="avatar-option-group">
+            <h2>Eyes</h2>
+            <div id="eyes-row" class="swatch-row"></div>
+        </section>
+
+        <section class="avatar-option-group">
+            <h2>Skin color</h2>
+            <div id="skincolor-row" class="swatch-row"></div>
+        </section>
+
+        <section class="avatar-option-group">
+            <h2>Accesories</h2>
+            <div id="accessories-row" class="swatch-row"></div>
+        </section>
+    </main>
+
+    <div id="nav-bar">
+        <button type="button" id="btn-confirm-avatar" class="btn-nav">This one !</button>
+    </div>
+
+    <script type="module" src="../static/js/avatar-setup.js"></script>
+    <script type="module" src="../static/js/auth.js"></script>
+    <script type="module">
+        import { requireAuth } from "../static/js/auth.js";
+        requireAuth("child");
+    </script>
+</body>
+</html>

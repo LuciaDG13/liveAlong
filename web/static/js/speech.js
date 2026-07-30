@@ -5,8 +5,13 @@ let audioContext, analyser, micSource, silenceCheckId;
 let lastSoundTime = 0
 let hasDetectedSound = false;
 
-const SILENCE_LIMIT = 7000;
-const SOUND_TRESHOLD = 12;
+const SILENCE_LIMIT = 4000;
+const CALIBRATION_DURATION = 400;
+const NOISE_MARGIN = 8;
+
+let ambientNoiseLevel=0;
+let calibrating = false;
+let calibrationSamples = [];
 
 const startButton = document.getElementById("btn-micro");
 
@@ -16,7 +21,6 @@ function resetMicButton() {
     startButton.className = "bi bi-mic";
 }
 
-// Quand on se rapproche de 0, le programme va considerer qu'on est autour de 128
 function getVolumeLevel() {
     if (!analyser) return 0;
 
@@ -32,7 +36,13 @@ function getVolumeLevel() {
 
 function monitorSilence(){
     const level = getVolumeLevel();
-    if(level>SOUND_TRESHOLD){
+    if(calibrating){
+        calibrationSamples.push(level);
+        return;
+    }
+    const treshold = ambientNoiseLevel + NOISE_MARGIN;
+
+    if(level>treshold){
         lastSoundTime = Date.now();
         hasDetectedSound=true;
     }
@@ -67,7 +77,16 @@ startButton.onclick = async () => {
             micSource.connect(analyser); // Brancher la sonde sur le micro
 
             hasDetectedSound = false;
-            lastSoundTime = Date.now();
+            calibrationSamples = [];
+            calibrating = true;
+
+            setTimeout(() => {
+                calibrating = false;
+                ambientNoiseLevel = calibrationSamples.length
+                    ? calibrationSamples.reduce((a, b) => a + b, 0) / calibrationSamples.length
+                    : 0;
+                lastSoundTime = Date.now(); // le chrono de silence démarre après la calibration
+            }, CALIBRATION_DURATION);
 
             mediaRecorder.ondataavailable = (event) => {
                 audioChunks.push(event.data);
@@ -97,7 +116,6 @@ startButton.onclick = async () => {
                         console.log("%c[LiveAlong] Transcription reconnue :", "color:#4A7569;font-weight:bold;", data.user_input);
                     }
                     renderAIResponse(data);
-                    showMessageState();
                 } catch (error) {
                     console.error("Erreur durant le traitement vocal :", error);
                 } finally {

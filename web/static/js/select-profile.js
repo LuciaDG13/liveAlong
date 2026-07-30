@@ -119,6 +119,9 @@ function renderProfileSummary(profile) {
                     <i class="bi bi-arrow-left"></i>
                 </button>
                 <h2 class="profile-detail-title">Profile recap</h2>
+                <button type="button" class="profile-detail-delete" aria-label="Delete profile">
+                    <i class="bi bi-trash"></i>
+                </button>
             </div>
             <div class="profile-detail-table-wrapper">
                 <table class="profile-detail-table">
@@ -198,6 +201,28 @@ async function loadProfileDetails(profileId) {
                 showListView();
             });
         }
+
+        const deleteButton = profileDetail.querySelector(".profile-detail-delete");
+
+        if (deleteButton) {
+            deleteButton.addEventListener("click", async () => {
+                const confirmDelete = window.confirm("Êtes-vous sûr de vouloir supprimer définitivement ce profil ? Cette action est irréversible.");
+                if (!confirmDelete) return;
+
+                try {
+                    const response = await fetch(`/therapist/delete_profile/${profileId}`, { method: "POST" });
+                    if (!response.ok) throw new Error("Delete failed");
+
+                    allProfiles = allProfiles.filter(profile => profile.id !== profileId);
+                    renderProfiles(allProfiles);
+                    showListView();
+                } catch (error) {
+                    console.error("Failed to delete profile:", error);
+                    alert("Une erreur est survenue lors de la suppression du profil.");
+                }
+            });
+        }
+        
     } catch (error) {
         console.error("Failed to load profile detail:", error);
         showDetailView();

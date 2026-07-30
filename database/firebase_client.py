@@ -153,3 +153,14 @@ def create_auth_account(email, password):
     except Exception as e:
         print(f"Error during the creation of the user: {e}")
         return None
+
+def update_avatar(user_id, avatar_svg, options):
+    db.collection("Profiles").document(user_id).update({
+        "avatar_svg": avatar_svg,
+        "avatar_options": options,
+        "avatar_customized": True
+    })
+
+def delete_child_profile(user_id):
+    auth.delete_user(user_id)
+    db.collection("Profiles").document(user_id).delete()
