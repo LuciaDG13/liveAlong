@@ -5,8 +5,6 @@ from functools import wraps
 def get_decoded_session():
     session_cookie = request.cookies.get("session")
     if not session_cookie:
-        print("Les cookies ne sont pas chargés")
-        """Debugging line"""
         return None
     try:
         return auth.verify_session_cookie(session_cookie, check_revoked= True, clock_skew_seconds=60)

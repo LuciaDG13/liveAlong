@@ -111,7 +111,20 @@ def run_session(user_profile, exercise, conversation_history):
     - Always respond to what the child just said before continuing
     - Take previous sessions into account to avoid repeating what has already been done
     - Adapt your speech according to the profile, emphasizing aspects that are difficult for the child
-    - Do not exagerate too much, children with ASD have trouble with insincerity. 
+    - Do not exagerate too much, children with ASD have trouble with insincerity.
+    - You have to ask questions using the ABA method, and the conversation has to be fluid, and should not be an effort for the children
+
+    Ending the exercise early:
+    - If the child says or clearly shows that they don't want to continue, or that they are too
+      tired for this right now, do not push them to keep going. Acknowledge this warmly, tell them
+      it is okay to stop, and ask if they would like to take a break and end here for today.
+    - If, after you've offered this, the child confirms they want to stop (or repeats that they
+      don't want to continue), close the session warmly (e.g. "That's okay, we can continue another
+      time. See you soon!") and finish your reply with the exact tag <<END_EXERCISE>> on its own new
+      line, after your goodbye message.
+    - Never add this tag just because the child is briefly distracted, quiet, or exploring a
+      tangent -- only after they have clearly and directly confirmed they want to stop.
+      
     These are children with autism spectrum disorders. It is therefore necessary to adapt the speech for them.
     ASD-related considerations to keep in mind during the conversation:
 
@@ -187,20 +200,33 @@ def run_session(user_profile, exercise, conversation_history):
             print(f"Erreur inattendue : {e}")
             return "Something went wrong, try again later."
 '''
-def run_session(user_profile, exercise, conversation_history):
+def run_session(user_profile, exercise, conversation_history, today_emotion=None):
+    if not MODEL_AVAILABLE:
+        return "Sorry, I could not load the companion model right now. Please try again later."
     if not exercise:
         return "Sorry, I could not find an adapted exercise for you today :("
     insights_summary = build_insights_summary(user_profile)
+    checkin_note = (
+        f"""
+    At the start of this visit, {user_profile["name"]} told us they are feeling "{today_emotion}" right now.
+    Take this into account throughout the conversation: if it suggests they might be having a hard time,
+    be extra gentle, do not push the exercise if they resist or seem reluctant, and consider acknowledging
+    how they said they feel before diving in. If it suggests they are doing well, you can match that lighter
+    energy. Either way, this is a starting signal, not a fixed label -- keep responding to what they actually
+    say as the conversation unfolds.
+    """
+        if today_emotion else ""
+    )
     system_prompt = f"""
-    You are a conversational companion that directly interacts with a child with Autism Spectrum Disorder, 
-    under indirect supervision of their therapist. Your conversation will be analyzed afterward to extract 
+    You are a conversational companion that directly interacts with a child with Autism Spectrum Disorder,
+    under indirect supervision of their therapist. Your conversation will be analyzed afterward to extract
     clinically relevant information for the therapist.
     You are specialized in the communication with the children with ASD, to help them to open up.
     You know that every children with ASD is different, and that you have to always adapt to them and their profile.
     Be cautious to avoid neurotypical bias. ASD children do not have problems to correct, they have differences that should be respected.
     The goal of the exercises is to help them, but it should not make them feel like they cannot be themselves. Conversations go both ways.
 
-    When relevant, help the child understand not only how to act, but also why neurotypical people 
+    When relevant, help the child understand not only how to act, but also why neurotypical people
     might react the way they do — framing it as a mutual difference in communication style, not a deficit.
     
     Profile of the user:
@@ -209,6 +235,7 @@ def run_session(user_profile, exercise, conversation_history):
     - Sensory sensibilities : {", ".join(user_profile["sensory"])}
     - Interests : {user_profile["interest"]}
     - Level of vocabulary : {user_profile["language"]}
+    {checkin_note}
         
     Here is what we know about {user_profile["name"]} from the previous sessions : {insights_summary}.
     Use this informations to adapt your way to present the exercise, and to prevent from doing the same exercise every time.
@@ -233,7 +260,18 @@ def run_session(user_profile, exercise, conversation_history):
     - Always respond to what the child just said before continuing
     - Take previous sessions into account to avoid repeating what has already been done
     - Adapt your speech according to the profile, emphasizing aspects that are difficult for the child
-    - Do not exagerate too much, children with ASD have trouble with insincerity. 
+    - Do not exagerate too much, children with ASD have trouble with insincerity.
+
+    Ending the exercise early:
+    - If the child says or clearly shows that they don't want to continue, or that they are too
+      tired for this right now, do not push them to keep going. Acknowledge this warmly, tell them
+      it is okay to stop, and ask if they would like to take a break and end here for today.
+    - If, after you've offered this, the child confirms they want to stop (or repeats that they
+      don't want to continue), close the session warmly (e.g. "That's okay, we can continue another
+      time. See you soon!") and finish your reply with the exact tag <<END_EXERCISE>> on its own new
+      line, after your goodbye message.
+    - Never add this tag just because the child is briefly distracted, quiet, or exploring a
+      tangent -- only after they have clearly and directly confirmed they want to stop.
     These are children with autism spectrum disorders. It is therefore necessary to adapt the speech for them.
     ASD-related considerations to keep in mind during the conversation:
 
@@ -327,10 +365,15 @@ def analyze_session(user_profile, conversation_history, theme):
         "summary": "summary of the session in 3 sentences maximum",
         "difficulties": "difficulties of the children that you observed during the session",
         "progress": "progress or good points that you notices",
-        "recommended_next_Theme": "theme that you recommand to do for the next session with this child"
+        "recommended_next_Theme": "theme that you recommand to do for the next session with this child",
+        "understanding": "one of exactly: struggling, developing, confident -- how well the child grasped and engaged with THIS session's theme, based only on this conversation"
     }}
     Your answers have to be absed on the conversation only.
-    If you don't have enough elements for a field, enter an empty list [] or an empty string
+    If you don't have enough elements for a field, enter an empty list [] or an empty string.
+    For "understanding": use "struggling" if the child seemed confused, disengaged, or unable to
+    apply the concept even with help; "developing" if they partially grasped it or needed real
+    support to get there; "confident" if they engaged with ease and applied the concept with
+    little or no help. This is about their grasp of today's theme, not their overall ability.
     """
 
     messages = [{"role": "system", "content": system_prompt}]
@@ -348,12 +391,14 @@ def analyze_session(user_profile, conversation_history, theme):
                 **inputs,
                 max_new_tokens=LLM_MAX_TOKENS,
                 do_sample=False,
-                temperature=0.7,
                 pad_token_id=tokenizer.eos_token_id
             )
         new_tokens = output[0][inputs["input_ids"].shape[1]:]
         response_text = tokenizer.decode(new_tokens, skip_special_tokens=True)
         clean = response_text.replace("```json", "").replace("```", "").strip()
+        start, end = clean.find("{"), clean.rfind("}")
+        if start != -1 and end != -1:
+            clean = clean[start:end + 1]
         return json.loads(clean)
 
     except Exception as e:
@@ -421,12 +466,14 @@ def consolidate_profile(user_profile, new_insights):
                 **inputs,
                 max_new_tokens=LLM_MAX_TOKENS,
                 do_sample=False,
-                temperature=0.7,
                 pad_token_id=tokenizer.eos_token_id
             )
         new_tokens = output[0][inputs["input_ids"].shape[1]:]
         response_text = tokenizer.decode(new_tokens, skip_special_tokens=True)
         clean = response_text.replace("```json", "").replace("```", "").strip()
+        start, end = clean.find("{"), clean.rfind("}")
+        if start != -1 and end != -1:
+            clean = clean[start:end + 1]
         return json.loads(clean)
     
     except Exception as e:

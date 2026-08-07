@@ -21,4 +21,17 @@ def get_user_profile(user_id):
     profile["interest"] = profile.get("interests")
     profile["language"] = profile.get("language-level")
 
+    sensory_categories = []
+    if profile.get("sensory-auditory"):
+        sensory_categories.append("auditory")
+    if profile.get("sensory-visual"):
+        sensory_categories.append("visual")
+    if profile.get("sensory-tactile"):
+        sensory_categories.append("tactile")
+    if profile.get("sensory-olfactory"):
+        sensory_categories.append("olfactory")
+    if profile.get("sensory-gustatory"):
+        sensory_categories.append("gustatory")
+    profile["sensory_categories"] = sensory_categories
+
     return profile

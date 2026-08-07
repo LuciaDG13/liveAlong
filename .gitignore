@@ -1,5 +1,9 @@
 node_modules
 
+# Trained safety-classifier artifact -- regenerate from data/train.csv via
+# `python -m llm.safety_classifier.train`, don't commit the binary blob.
+llm/safety_classifier/model.joblib
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

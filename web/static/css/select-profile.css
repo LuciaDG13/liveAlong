@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding-bottom: 30px;
+    padding-bottom: calc(var(--nav-height) + 20px);
 }
 
 .profile-list.hidden,
@@ -43,10 +43,24 @@
     font-weight: bold;
 }
 
+.profile-card-badge {
+    margin-left: auto;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.profile-card-badge.usage {
+    color: #C58A2E;
+}
+
+.profile-card-badge.alert {
+    color: #B3261E;
+}
+
 .btn-scroll-top {
     position: fixed;
     right: 20px;
-    bottom: 20px;
+    bottom: calc(var(--nav-height) + 16px);
     width: 48px;
     height: 48px;
     border: none;
@@ -82,7 +96,7 @@
 .profile-detail {
     display: grid;
     gap: 18px;
-    margin-bottom: 40px;
+    margin-bottom: calc(var(--nav-height) + 20px);
     width: 100%;
 }
 
@@ -98,6 +112,65 @@
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 10px 24px rgba(44, 82, 130, 0.07);
+}
+
+.safety-alerts-card {
+    border-color: #EFC2BE;
+}
+
+.safety-alert-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: #FBEEEC;
+    border-left: 4px solid #B3261E;
+}
+
+.safety-alert-row.mild_distress {
+    background: #FBF3E4;
+    border-left-color: #C58A2E;
+}
+
+.safety-alert-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.safety-alert-level {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: #B3261E;
+}
+
+.safety-alert-row.mild_distress .safety-alert-level {
+    color: #C58A2E;
+}
+
+.safety-alert-time {
+    margin-left: 8px;
+    font-size: 0.8rem;
+    color: #6b6b6b;
+}
+
+.safety-alert-excerpt {
+    margin: 4px 0 0;
+    word-break: break-word;
+}
+
+.safety-alert-ack {
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1.5px solid #B3261E;
+    color: #B3261E;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .profile-detail-header {
@@ -237,3 +310,93 @@
     border-color: #D66262;
     color: #ffffff;
 }
+
+/* ─── Heatmap humeur (suivi émotionnel) ──────────────────────── */
+
+:root {
+    --e-happy: #3f8a5c;      --e-happy-bg: #E3F3E9;
+    --e-confused: #a97a1f;   --e-confused-bg: #F7EFDC;
+    --e-sad: #4c6fa3;        --e-sad-bg: #E6ECF7;
+    --e-ashamed: #8a5b8f;    --e-ashamed-bg: #F1E6F2;
+    --e-angry: #b5432f;      --e-angry-bg: #FBE7E3;
+    --e-scared: #6b6b8f;     --e-scared-bg: #ECECF5;
+    --e-disgusted: #5c7a3a;  --e-disgusted-bg: #EDF2E4;
+    --e-surprised: #b5811f;  --e-surprised-bg: #F9EFDA;
+    --e-empty-bg: #F1F3F2;
+}
+
+.heat-row {
+    display: flex;
+}
+
+.heat-dow {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    justify-content: space-between;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.heat-dow span {
+    font-size: 0.68rem;
+    color: #6b7785;
+    height: 15px;
+    line-height: 15px;
+}
+
+.heat-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 3px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.heat-cell {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    background: var(--e-empty-bg);
+}
+
+.heat-cell.e-happy { background: var(--e-happy-bg); }
+.heat-cell.e-confused { background: var(--e-confused-bg); }
+.heat-cell.e-sad { background: var(--e-sad-bg); }
+.heat-cell.e-ashamed { background: var(--e-ashamed-bg); }
+.heat-cell.e-angry { background: var(--e-angry-bg); }
+.heat-cell.e-scared { background: var(--e-scared-bg); }
+.heat-cell.e-disgusted { background: var(--e-disgusted-bg); }
+.heat-cell.e-surprised { background: var(--e-surprised-bg); }
+
+.heat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 12px;
+}
+
+.heat-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #58708a;
+}
+
+.heat-legend-item .sw {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.heat-legend-item .sw.e-happy { background: var(--e-happy); }
+.heat-legend-item .sw.e-confused { background: var(--e-confused); }
+.heat-legend-item .sw.e-sad { background: var(--e-sad); }
+.heat-legend-item .sw.e-ashamed { background: var(--e-ashamed); }
+.heat-legend-item .sw.e-angry { background: var(--e-angry); }
+.heat-legend-item .sw.e-scared { background: var(--e-scared); }
+.heat-legend-item .sw.e-disgusted { background: var(--e-disgusted); }
+.heat-legend-item .sw.e-surprised { background: var(--e-surprised); }

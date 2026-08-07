@@ -22,48 +22,99 @@
                     </div>
                     <h1 class="header-name-appli">LiveAlong</h1>
                 </div>
-                <div class="header-user-status">
-                    <span id="user-display-name" class="user-name">Loading...</span>
-                    <button type="button" id="btn-logout" class="btn-logout">Log out</button>
-                </div>
             </div>
         </header>
 
-        <div id="main-area">
-            <section id="avatar-zone">
-                <div id="avatar-container">
-                    <audio id="avatar-audio" hidden></audio>
+        <main id="tab-content">
+            <section id="tab-home" class="tab-pane active-tab">
+                <section id="emotion-checkin">
+                    <h2>How are you feeling today ?</h2>
+                    <div id="emotion-checkin-grid" class="emotion-checkin-grid"></div>
+                </section>
+            </section>
+
+            <section id="tab-chat" class="tab-pane">
+                <section id="chat-placeholder">
+                    <i class="bi bi-chat-heart"></i>
+                    <p>Check in on the Home tab to start today's activity.</p>
+                </section>
+
+                <section id="session-loading" hidden>
+                    <i class="bi bi-hourglass-split"></i>
+                    <p>Preparing your session...</p>
+                </section>
+
+                <div id="main-area" hidden>
+                    <section id="usage-nudge-banner" hidden>
+                        <p>You've practiced a lot today. It's okay to take a break whenever you want.</p>
+                        <button type="button" id="btn-dismiss-usage-nudge">OK</button>
+                    </section>
+
+                    <div class="chat-topbar">
+                        <button type="button" id="btn-end-session" class="btn-end-chip">
+                            👋 See you
+                        </button>
+                    </div>
+
+                    <section id="avatar-zone">
+                        <div id="avatar-container">
+                            <audio id="avatar-audio" hidden></audio>
+                        </div>
+                    </section>
+
+                    <section id="mic-zone">
+                        <div id="selected-pictograms"></div>
+                        <div id="buttons-pict">
+                            <button class="button-confirm" id="button-confirm-pict">✓</button>
+                            <button class="button-cancel" id="button-cancel-pict">✗</button>
+                        </div>
+                        <button id="btn-micro" class="bi bi-mic"></button>
+                    </section>
+
+                    <section id="pictogram-zone">
+                        <div id="pictogram-core-bar" class="pictogram-core-bar"></div>
+                        <div id="pictogram-category-tabs" class="pictogram-category-tabs"></div>
+                        <div id="pictogram_grid" class="pictogram-grid"></div>
+                    </section>
+
+                    <section id="end-screen" hidden>
+                        <p id="end-screen-message">See you later ! 👋</p>
+                        <button type="button" id="btn-new-conversation" class="btn-nav">New chat</button>
+                    </section>
                 </div>
             </section>
 
-            <section id="mic-zone">
-                <div id="selected-pictograms"></div>
-                <div id="buttons-pict">
-                    <button class="button-confirm" id="button-confirm-pict">✓</button>
-                    <button class="button-cancel" id="button-cancel-pict">✗</button>
+            <section id="tab-progress" class="tab-pane">
+                <div class="progress-panel-header">
+                    <div>
+                        <h2>My Progress</h2>
+                        <span id="user-display-name" class="progress-panel-subtitle"></span>
+                    </div>
                 </div>
-                <button id="btn-micro" class="bi bi-mic"></button>
-            </section>
-
-            <section id="pictogram-zone">
-                <div class="container-fluid" id="response-bottom">
-                    <div class="row" id="pictogram_grid"></div>
+                <div class="progress-section">
+                    <h3>Activities I've practiced</h3>
+                    <div id="progress-activities"></div>
+                </div>
+                <div class="progress-section">
+                    <h3>Skills I'm growing</h3>
+                    <div id="progress-skills" class="badge-row"></div>
                 </div>
             </section>
+        </main>
 
-            <section id="end-screen" hidden>
-                <p id="end-screen-message">See you later ! 👋</p>
-                <button type="button" id="btn-new-conversation" class="btn-nav">New chat</button>
-            </section>
-        </div>
-
-        <div id="nav-bar">
+        <div id="app-nav-bar">
             <div id="nav-center">
-                <button id="btn-end-session" style="background-color: #E2ECF7; color: #2C5282; border: 1.5px solid #BEE3F8; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; height: 48px; padding: 0 16px; font-weight: 600;">
-                    <i class="bi bi-hand-wave-fill"></i> See you
+                <button type="button" class="tab-nav-btn is-active" data-tab="home">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Home</span>
                 </button>
-                <button id="btn-home" onclick="window.location.href='/'" style="background-color: var(--color-accent-soft); color: var(--color-accent); border: 1.5px solid rgba(74, 117, 105, 0.2); display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; height: 48px; padding: 0 16px; font-weight: 600;">
-                    <i class="bi bi-house-door-fill"></i> Home Page
+                <button type="button" class="tab-nav-btn" data-tab="chat">
+                    <i class="bi bi-chat-dots-fill"></i>
+                    <span>Chat</span>
+                </button>
+                <button type="button" class="tab-nav-btn" data-tab="progress">
+                    <i class="bi bi-star-fill"></i>
+                    <span>Progress</span>
                 </button>
             </div>
         </div>

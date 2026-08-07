@@ -138,7 +138,3 @@ startButton.onclick = async () => {
         stopRecording();
     }
 };
-
-// Désactivation des anciens boutons de confirmation textuelle devenus inutiles
-document.getElementById("btn-confirm-voice").onclick = () => {};
-document.getElementById("btn-cancel-voice").onclick = () => {};

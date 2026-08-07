@@ -31,7 +31,7 @@
     border-radius: 16px;
     border: 1.5px solid var(--border-color);
     box-shadow: var(--shadow);
-    margin-bottom: 80px; /* Espace pour éviter que la barre de navigation ne cache le formulaire */
+    margin-bottom: calc(70px + var(--nav-height) + 20px); /* Espace pour éviter que les deux barres ne cachent le formulaire */
 }
 
 .form-step.step-active {
@@ -105,7 +105,7 @@
 /* Barre de navigation des étapes (en bas) */
 #nav-bar {
     position: fixed;
-    bottom: 0;
+    bottom: var(--nav-height); /* empilé au-dessus de la barre d'onglets #app-nav-bar */
     left: 0;
     right: 0;
     height: 70px;

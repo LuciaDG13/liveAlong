@@ -1,9 +1,9 @@
-async function startSession(userId){
+async function startSession(userId, emotion){
     try {
         const response = await fetch("/start", {
             method:"POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userId })
+            body: JSON.stringify({ user_id: userId, emotion: emotion })
         });
         const data = await response.json();
         return data;

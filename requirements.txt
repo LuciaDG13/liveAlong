@@ -1,5 +1,6 @@
 # ─── Web framework ───────────────────────────────────────────
 Flask==3.1.3
+Flask-Limiter==3.13
 Werkzeug==3.1.8
 blinker==1.9.0
 click==8.4.1
@@ -32,9 +33,6 @@ google-ai-generativelanguage==0.6.15
 # ─── PyTorch + GPU (RTX 5070 / sm_120 / CUDA 12.8) ──────────
 # Installation manuelle requise :
 # pip install torch==2.9.1+cu128 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
-torch==2.9.1+cu128
-torchvision
-torchaudio
 
 # ─── ASD-iLLM (Qwen2.5-7B + LoRA) ───────────────────────────
 ms-swift
@@ -63,6 +61,10 @@ pydantic_core==2.46.4
 annotated-types==0.7.0
 typing_extensions==4.15.0
 typing-inspection==0.4.2
+
+# ─── Safety classifier ───────────────────────────────────────
+scikit-learn
+joblib
 
 # ─── Utilitaires ─────────────────────────────────────────────
 tqdm==4.68.2
@@ -98,3 +100,8 @@ h11==0.16.0
 # ─── Autres ──────────────────────────────────────────────────
 uritemplate==4.2.0
 proto-plus==1.28.0
+
+dicebear-core
+dicebear-styles
+
+bitsandbytes

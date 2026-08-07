@@ -68,7 +68,7 @@ function generateRecap() {
 
     let html = "<dl class='recap-list'>";
     for (const [key, value] of formData.entries()) {
-        if (key === "confirm-data") continue;
+        if (key === "confirm-data" || key === "parental-consent") continue;
 
         const label = escapeHtml(getLabel(key));
         const safeValue = value ? escapeHtml(value) : "<em>Not provided</em>";

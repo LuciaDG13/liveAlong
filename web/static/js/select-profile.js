@@ -43,6 +43,8 @@ function renderProfiles(profiles) {
     profileList.innerHTML = profiles.map(profile => `
         <button type="button" class="profile-card" data-id="${escapeHtml(profile.id)}">
             <span class="profile-card-name">${escapeHtml(profile.name || "Unnamed profile")}</span>
+            ${profile.alert_count > 0 ? `<span class="profile-card-badge alert" title="${profile.alert_count} unacknowledged safety alert(s)">●</span>` : ""}
+            ${profile.usage_flag ? `<span class="profile-card-badge usage" title="High usage today">●</span>` : ""}
         </button>
     `).join("");
 }
@@ -180,6 +182,104 @@ function renderConversationSessions(sessions) {
     `;
 }
 
+const EMOTION_LABELS = {
+    happy: "Happy", confused: "Confused", sad: "Sad", ashamed: "Ashamed",
+    angry: "Angry", scared: "Scared", disgusted: "Disgusted", surprised: "Surprised",
+};
+const EMOTION_HEATMAP_WEEKS = 12;
+
+function pad2(n) {
+    return String(n).padStart(2, "0");
+}
+
+function toDayKey(date) {
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
+
+function renderEmotionTimeline(emotions) {
+    if (!emotions || emotions.length === 0) {
+        return `
+            <div class="conversation-card">
+                <h2 class="profile-detail-title">Suivi émotionnel</h2>
+                <p class="profile-list-message">Aucune émotion déclarée pour le moment.</p>
+            </div>
+        `;
+    }
+
+    // one entry per day: keep the most recent if the child checked in more than once
+    const latestByDay = {};
+    emotions.forEach(entry => {
+        const day = (entry.timestamp || "").slice(0, 10);
+        if (!day) return;
+        if (!latestByDay[day] || entry.timestamp > latestByDay[day].timestamp) {
+            latestByDay[day] = entry;
+        }
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const mondayOffset = (today.getDay() + 6) % 7; // 0 = Monday
+    const start = new Date(today);
+    start.setDate(start.getDate() - mondayOffset - (EMOTION_HEATMAP_WEEKS - 1) * 7);
+
+    const cells = [];
+    for (let i = 0; i < EMOTION_HEATMAP_WEEKS * 7; i++) {
+        const day = new Date(start);
+        day.setDate(start.getDate() + i);
+        const key = toDayKey(day);
+        const entry = latestByDay[key];
+        cells.push({ key, emotion: entry ? entry.emotion : null });
+    }
+
+    const gridHtml = cells.map(cell => {
+        const cls = cell.emotion && EMOTION_LABELS[cell.emotion] ? `heat-cell e-${cell.emotion}` : "heat-cell";
+        const title = cell.emotion ? `${cell.key} — ${EMOTION_LABELS[cell.emotion] || cell.emotion}` : cell.key;
+        return `<div class="${cls}" title="${escapeHtml(title)}"></div>`;
+    }).join("");
+
+    const usedEmotions = new Set(Object.values(latestByDay).map(e => e.emotion).filter(e => EMOTION_LABELS[e]));
+    const legendHtml = Object.keys(EMOTION_LABELS)
+        .filter(emotion => usedEmotions.has(emotion))
+        .map(emotion => `
+            <div class="heat-legend-item"><span class="sw e-${emotion}"></span>${EMOTION_LABELS[emotion]}</div>
+        `).join("");
+
+    return `
+        <div class="conversation-card">
+            <h2 class="profile-detail-title">Suivi émotionnel</h2>
+            <div class="heat-row">
+                <div class="heat-dow"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span></div>
+                <div class="heat-grid">${gridHtml}</div>
+            </div>
+            <div class="heat-legend">${legendHtml}</div>
+        </div>
+    `;
+}
+
+function renderSafetyAlerts(alerts, profileId) {
+    if (!alerts || alerts.length === 0) {
+        return "";
+    }
+
+    const rows = alerts.map(alert => `
+        <div class="safety-alert-row ${escapeHtml(alert.risk_level || "")}">
+            <div class="safety-alert-info">
+                <span class="safety-alert-level">${escapeHtml(alert.risk_level || "unknown")}</span>
+                <span class="safety-alert-time">${escapeHtml(alert.timestamp || "—")}</span>
+                <p class="safety-alert-excerpt">${escapeHtml(formatValue(alert.message_excerpt))}</p>
+            </div>
+            <button type="button" class="safety-alert-ack" data-alert-id="${escapeHtml(alert.id)}">Acknowledge</button>
+        </div>
+    `).join("");
+
+    return `
+        <div class="conversation-card safety-alerts-card" data-profile-id="${escapeHtml(profileId)}">
+            <h2 class="profile-detail-title">Safety alerts</h2>
+            ${rows}
+        </div>
+    `;
+}
+
 async function loadProfileDetails(profileId) {
     try {
         const response = await fetch(`/api/profiles/${profileId}/details`);
@@ -192,8 +292,25 @@ async function loadProfileDetails(profileId) {
         showDetailView();
         profileDetail.innerHTML = `
             ${renderProfileSummary(data.profile)}
+            ${renderSafetyAlerts(data.alerts, profileId)}
+            ${renderEmotionTimeline(data.emotions)}
             ${renderConversationSessions(data.sessions)}
         `;
+
+        profileDetail.querySelectorAll(".safety-alert-ack").forEach(button => {
+            button.addEventListener("click", async () => {
+                const alertId = button.dataset.alertId;
+                button.disabled = true;
+                try {
+                    const ackResponse = await fetch(`/api/profiles/${profileId}/alerts/${alertId}/acknowledge`, { method: "POST" });
+                    if (!ackResponse.ok) throw new Error("Acknowledge failed");
+                    await loadProfileDetails(profileId);
+                } catch (error) {
+                    console.error("Failed to acknowledge alert:", error);
+                    button.disabled = false;
+                }
+            });
+        });
 
         const backButton = profileDetail.querySelector(".profile-detail-back");
         if (backButton) {

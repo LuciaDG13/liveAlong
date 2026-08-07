@@ -1,46 +1,5 @@
-:root {
-    --nav-height: 76px; /* hauteur fixe de la barre de boutons en bas */
-}
-
-/* ---Navbar--- */
-
-#nav-bar {
-    flex-shrink: 0; /* Signifie que ça ne se compresse pas */
-    height: var(--nav-height);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    background: #FFFFFF;
-    border-top: 1px solid #E2DED3;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
-}
-
-#nav-left, #nav-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-#btn-next, #btn-back {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 2rem;
-    color: var(--color-accent);
-    line-height: 1;
-    padding: 4px;
-    transition: opacity 0.15s;
-}
-
-#btn-next:hover, #btn-back:hover {
-    opacity: 0.7;
-}
-
-#btn-next.hidden-btn, #btn-back.hidden-btn {
-    visibility: hidden;
-    pointer-events: none;
-}
+/* --nav-height et #app-nav-bar sont définis dans common.css, partagés
+   avec le côté enfant. */
 
 /* --- Boutons de navigation thérapeute --- */
 .btn-nav {
@@ -69,4 +28,5 @@
     align-items: center;
     gap: 16px;
     margin-top: 24px;
+    margin-bottom: var(--nav-height);
 }

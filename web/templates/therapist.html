@@ -22,20 +22,29 @@
                     </div>
                     <h1 class="header-name-appli">LiveAlong</h1>
                 </div>
-                <div class="header-user-status">
-                    <span id="user-display-name" class="user-name">Loading...</span>
-                    <button type="button" id="btn-logout" class="btn-logout">Log out</button>
-                </div>
             </div>
         </header>
 
         <main class="responsive-wrapper">
             <h1 class="page-title">Therapist Interface</h1>
-            <div class="button-container">                
+            <div class="button-container">
                 <a type="button" href="/therapist/create_profile" class="btn-nav">Create Profile</a>
                 <a type="button" href="/therapist/profiles" class="btn-nav">View Profiles</a>
             </div>
         </main>
+
+        <div id="app-nav-bar">
+            <div id="nav-center">
+                <a href="/therapist/profiles" class="tab-nav-btn">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Profiles</span>
+                </a>
+                <a href="/therapist/create_profile" class="tab-nav-btn">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <span>Create Profile</span>
+                </a>
+            </div>
+        </div>
 
         <script type="module" src="../static/js/auth.js"></script>
         <script type= "module">

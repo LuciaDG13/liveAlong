@@ -6,9 +6,8 @@ import uuid
 from pathlib import Path
 
 from llm import tts_service
+from config.config import RHUBARB_PATH
 
-
-RHUBARB_PATH = r"C:\Users\ISK26RA1001\Documents\livealong\liveAlong\rhubarb\Rhubarb-Lip-Sync-1.14.0-Windows\rhubarb.exe"
 
 def synthesize_speech_with_lip_sync (text: str) -> dict:
     audio_b64 = tts_service.synthesize_speech(text)
@@ -33,8 +32,12 @@ def synthesize_speech_with_lip_sync (text: str) -> dict:
         mouth_cues = cues_json.get("mouthCues", [])
  
     except (subprocess.CalledProcessError, FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"[lip_sync] Rhubarb a échoué, animation ignorée : {e}")
- 
+        print(f"[lip_sync] Rhubarb failed, animation cancelled: {e}")
+        if isinstance(e, subprocess.CalledProcessError):
+            print("--- Rhubarb stderr ---")
+            print(e.stderr.decode("utf-8", errors="replace") if e.stderr else "(empty)")
+            print("--- Rhubarb stdout ---")
+            print(e.stdout.decode("utf-8", errors="replace") if e.stdout else "(empty)")
     finally:
         wav_path.unlink(missing_ok=True)
         cues_path.unlink(missing_ok=True)
