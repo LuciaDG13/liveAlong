@@ -1,5 +1,16 @@
 const grid = document.getElementById("pictogram_grid");
 
+// Affiche/masque l'indice "plus de pictos en dessous" (.pictogram-scroll-hint,
+// cf. child.css) selon que la grille déborde et selon la position de scroll --
+// évite qu'un enfant ne se rende jamais compte qu'il manque des pictogrammes
+// hors champ.
+function updateGridScrollHint() {
+    const overflowing = grid.scrollHeight > grid.clientHeight + 1;
+    const atBottom = grid.scrollTop + grid.clientHeight >= grid.scrollHeight - 1;
+    grid.classList.toggle("has-more-below", overflowing && !atBottom);
+}
+grid.addEventListener("scroll", updateGridScrollHint);
+
 // Métadonnées des catégories : label affiché sur l'onglet, icône de
 // navigation (juste pour l'onglet, pas pour les pictogrammes eux-mêmes) et
 // couleur associée. La couleur est appliquée à la fois sur l'onglet et sur
@@ -93,14 +104,13 @@ function addToSelection(pictogram) {
     const deja = selection.children.length;
     if (deja >= 5) return;
     if (deja == 0) {
-        document.getElementById("buttons-pict").classList.add("visible");
+        document.getElementById("buttons-pict").classList.add("visible");        
+        document.getElementById("btn-micro").setAttribute("hidden", "");
     }
 
     selection.appendChild(createPictogramVisual(pictogram, "pictogram-visual-sm"));
 }
 
-// Barre fixe oui/non, rendue une seule fois au chargement (son contenu ne
-// dépend pas de l'onglet actif).
 function renderCoreBar() {
     const bar = document.getElementById("pictogram-core-bar");
     if (!bar) return;
@@ -166,6 +176,7 @@ function switchPictogramCategory(categoryId) {
 // Affiche uniquement les pictogrammes de la catégorie active.
 function renderGrid() {
     grid.innerHTML = "";
+    grid.scrollTop = 0;
 
     getPictogramsByCategory(activeCategory).forEach(pictogram => {
         const div = document.createElement("div");
@@ -182,6 +193,8 @@ function renderGrid() {
             addToSelection(pictogram);
         });
     });
+
+    updateGridScrollHint();
 }
 
 // Check-in d'humeur (onglet Home) : reprend uniquement les pictogrammes de

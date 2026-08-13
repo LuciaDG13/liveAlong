@@ -218,6 +218,12 @@ function renderAIResponse(data) {
     }
 }
 
+function clearPictogramSelection() {
+    document.getElementById("selected-pictograms").innerHTML = "";
+    document.getElementById("buttons-pict").classList.remove("visible");
+    document.getElementById("btn-micro").removeAttribute("hidden");
+}
+
 function initUIEvents() {
     const btnConfirmPict = document.getElementById("button-confirm-pict");
     if (btnConfirmPict) {
@@ -229,16 +235,14 @@ function initUIEvents() {
 
             const data = await sendMessage(messageText);
             renderAIResponse(data);
-            document.getElementById("selected-pictograms").innerHTML = "";
-            document.getElementById("buttons-pict").classList.remove("visible");
+            clearPictogramSelection();
         };
     }
 
     const btnCancelPict = document.getElementById("button-cancel-pict");
     if (btnCancelPict) {
         btnCancelPict.onclick = () => {
-            document.getElementById("selected-pictograms").innerHTML = "";
-            document.getElementById("buttons-pict").classList.remove("visible");
+            clearPictogramSelection();
         };
     }
 

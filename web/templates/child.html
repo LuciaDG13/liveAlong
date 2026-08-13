@@ -64,17 +64,22 @@
 
                     <section id="mic-zone">
                         <div id="selected-pictograms"></div>
-                        <div id="buttons-pict">
-                            <button class="button-confirm" id="button-confirm-pict">✓</button>
-                            <button class="button-cancel" id="button-cancel-pict">✗</button>
+                        <div id="mic-action-row">
+                            <button id="btn-micro" class="bi bi-mic"></button>
+                            <div id="buttons-pict">
+                                <button class="button-confirm" id="button-confirm-pict">✓</button>
+                                <button class="button-cancel" id="button-cancel-pict">✗</button>
+                            </div>
                         </div>
-                        <button id="btn-micro" class="bi bi-mic"></button>
                     </section>
 
                     <section id="pictogram-zone">
                         <div id="pictogram-core-bar" class="pictogram-core-bar"></div>
                         <div id="pictogram-category-tabs" class="pictogram-category-tabs"></div>
-                        <div id="pictogram_grid" class="pictogram-grid"></div>
+                        <div class="pictogram-grid-scroll">
+                            <div id="pictogram_grid" class="pictogram-grid"></div>
+                            <div class="pictogram-scroll-hint" aria-hidden="true"><i class="bi bi-chevron-down"></i></div>
+                        </div>
                     </section>
 
                     <section id="end-screen" hidden>
