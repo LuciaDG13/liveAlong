@@ -352,14 +352,14 @@ def create_profile(current_user):
     email_sent = send_temp_password(email, password)
     if email_sent is None:      
         auth.delete_user(new_id)
-        print("User {new_id} deleted due to email failure")  
+        print(f"User {new_id} deleted due to email failure")
         return jsonify({"error": "Failed to send temporary password email"}), 500
     mapped_data["user_id"] = new_id
     try:   
         create_user_profile(mapped_data, user_id=new_id)
     except Exception as e:
         auth.delete_user(new_id)
-        print("User {new_id} deleted due to an error: {e}") 
+        print(f"User {new_id} deleted due to an error: {e}")
         return jsonify({"error": "Failed to create user profile"}), 500
     return jsonify({"user_id": new_id})
 
@@ -375,8 +375,6 @@ def verify_token():
         user_profile = get_user_profile(uid)
         name = user_profile.get("name") if user_profile else None
         avatar_customized = user_profile.get("avatar_customized", False) if user_profile else False
-        print("Le nom est ", name) 
-        '''Debugging line'''
     except Exception:
         return jsonify({"error": "Invalid token"}), 401
     if decoded_token.get("role") == "therapist":
