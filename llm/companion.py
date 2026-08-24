@@ -291,9 +291,9 @@ def consolidate_profile(user_profile, new_insights):
     {json.dumps(current_consolidated, indent=2)}
     
     New observations from today's session:
-    - Personality traits observed: {new_insights.get('personality_traits', [])}
-    - Social difficulties observed: {new_insights.get('social_difficulties', [])}
+    - Difficulties observed: {new_insights.get('difficulties', '')}
     - Progress noted: {new_insights.get('progress', '')}
+    - Understanding level for this session's theme: {new_insights.get('understanding', '')}
     
     Update the consolidated profile by:
     - Adding new traits/difficulties if they are genuinely new

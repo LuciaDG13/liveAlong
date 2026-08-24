@@ -174,7 +174,8 @@ def start(current_user):
     "audio": speech["audio"],
     "mouthCues": speech["mouthCues"],
     "avatar_svg": user_profile.get("avatar_svg"),
-    "usage_nudge": usage_nudge
+    "usage_nudge": usage_nudge,
+    "communication_type": user_profile.get("communication-type")
     })
 
 @app.route("/message", methods=["POST"])
@@ -401,6 +402,7 @@ def verify_token():
     return response
 
 @app.route("/api/profiles", methods=["GET"])
+@limiter.limit("30/minute")
 @login_required
 def get_profiles(current_user):
     if current_user["role"] != "therapist":
@@ -410,6 +412,7 @@ def get_profiles(current_user):
 
 
 @app.route("/api/profiles/<profile_id>/details", methods=["GET"])
+@limiter.limit("30/minute")
 @login_required
 def get_profile_details(current_user, profile_id):
     if current_user["role"] != "therapist":
@@ -425,6 +428,7 @@ def get_profile_details(current_user, profile_id):
     return jsonify({"profile": profile, "sessions": sessions, "emotions": emotions, "alerts": alerts})
 
 @app.route("/api/profiles/<profile_id>/alerts/<alert_id>/acknowledge", methods=["POST"])
+@limiter.limit("30/minute")
 @login_required
 def acknowledge_profile_alert(current_user, profile_id, alert_id):
     if current_user["role"] != "therapist":
@@ -433,6 +437,7 @@ def acknowledge_profile_alert(current_user, profile_id, alert_id):
     return jsonify({"status": "acknowledged"})
 
 @app.route("/therapist/delete_profile/<profile_id>", methods=["POST"])
+@limiter.limit("5/minute")
 @login_required
 def delete_profile(current_user, profile_id):
     if current_user["role"] != "therapist":
@@ -456,6 +461,7 @@ def avatar_setup(current_user):
     return render_template("avatar-setup.html")
 
 @app.route("/api/avatar/save", methods=["POST"])
+@limiter.limit("10/minute")
 @login_required
 def save_avatar(current_user):
     if current_user["role"] != "child":
@@ -466,6 +472,7 @@ def save_avatar(current_user):
     return jsonify({"status": "ok"})
 
 @app.route("/api/emotion/checkin", methods=["POST"])
+@limiter.limit("10/minute")
 @login_required
 def emotion_checkin(current_user):
     if current_user["role"] != "child":

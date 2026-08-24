@@ -197,6 +197,8 @@
 	--cat-emotions-soft: #F7EAEE;
 }
 
+#pictogram-zone.priority { order: -1; }
+
 /* ─── Pictogrammes ───────────────────────────────────────────── */
 
 /* Wrapper qui porte le scroll -- séparé de #pictogram-zone pour que la

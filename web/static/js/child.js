@@ -105,6 +105,9 @@ async function revealMainSession() {
     showChatState("loading");
 
     const data = await sessionPromise;
+    if (data.communication_type === "Non-verbal") {
+        document.getElementById("pictogram-zone")?.classList.add("priority");
+    }
     showChatState("active");
 
     if (data.usage_nudge) {
