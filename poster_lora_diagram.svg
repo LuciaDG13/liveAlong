@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" font-family="-apple-system, 'Segoe UI', Roboto, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#23312F"/>
+    </marker>
+    <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4A7569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="560" fill="#FFFFFF"/>
+
+  <!-- Input x -->
+  <circle cx="90" cy="280" r="34" fill="#F4F7F6" stroke="#23312F" stroke-width="2"/>
+  <text x="90" y="286" text-anchor="middle" font-size="26" font-weight="600" fill="#23312F">x</text>
+  <text x="90" y="340" text-anchor="middle" font-size="15" fill="#556B66">input</text>
+
+  <!-- Split lines -->
+  <path d="M124,270 L 230,140" stroke="#23312F" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M124,290 L 230,420" stroke="#4A7569" stroke-width="2.5" fill="none" marker-end="url(#arrowAccent)"/>
+
+  <!-- Frozen pretrained weights W -->
+  <rect x="235" y="70" width="300" height="140" rx="14" fill="#EDEFEE" stroke="#23312F" stroke-width="2.5"/>
+  <text x="385" y="120" text-anchor="middle" font-size="24" font-weight="700" fill="#23312F">Pretrained weights W</text>
+  <text x="385" y="150" text-anchor="middle" font-size="18" fill="#556B66">Qwen2.5-7B-Instruct</text>
+  <text x="385" y="178" text-anchor="middle" font-size="17" font-weight="600" fill="#8A6116">❄ frozen -- never updated</text>
+
+  <!-- LoRA adapter box -->
+  <rect x="235" y="345" width="300" height="150" rx="14" fill="#EBF3F0" stroke="#4A7569" stroke-width="2.5" stroke-dasharray="7 5"/>
+  <text x="385" y="375" text-anchor="middle" font-size="22" font-weight="700" fill="#4A7569">LoRA adapter</text>
+
+  <!-- A and B small matrices inside adapter -->
+  <rect x="260" y="395" width="90" height="60" rx="8" fill="#FFFFFF" stroke="#4A7569" stroke-width="2"/>
+  <text x="305" y="431" text-anchor="middle" font-size="22" font-weight="700" fill="#4A7569">A</text>
+  <text x="305" y="470" text-anchor="middle" font-size="13" fill="#556B66">r × d</text>
+
+  <path d="M355,425 L 405,425" stroke="#4A7569" stroke-width="2" fill="none" marker-end="url(#arrowAccent)"/>
+
+  <rect x="410" y="395" width="90" height="60" rx="8" fill="#FFFFFF" stroke="#4A7569" stroke-width="2"/>
+  <text x="455" y="431" text-anchor="middle" font-size="22" font-weight="700" fill="#4A7569">B</text>
+  <text x="455" y="470" text-anchor="middle" font-size="13" fill="#556B66">d × r</text>
+
+  <text x="385" y="500" text-anchor="middle" font-size="15" font-weight="600" fill="#4A7569">trainable -- only ~77 MB</text>
+
+  <!-- Merge to sum node -->
+  <path d="M535,140 L 650,270" stroke="#23312F" stroke-width="2.5" fill="none"/>
+  <path d="M535,420 L 650,290" stroke="#4A7569" stroke-width="2.5" fill="none"/>
+  <circle cx="665" cy="280" r="26" fill="#FFFFFF" stroke="#23312F" stroke-width="2.5"/>
+  <text x="665" y="289" text-anchor="middle" font-size="26" fill="#23312F">+</text>
+
+  <!-- Output h -->
+  <path d="M691,280 L 770,280" stroke="#23312F" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <circle cx="805" cy="280" r="34" fill="#F4F7F6" stroke="#23312F" stroke-width="2"/>
+  <text x="805" y="286" text-anchor="middle" font-size="26" font-weight="600" fill="#23312F">h</text>
+  <text x="805" y="340" text-anchor="middle" font-size="15" fill="#556B66">output</text>
+
+  <!-- Formula caption -->
+  <text x="450" y="545" text-anchor="middle" font-size="19" font-weight="600" fill="#23312F">h = W·x + (B·A)·x</text>
+</svg>

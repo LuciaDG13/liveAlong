@@ -126,7 +126,11 @@
 
 #selected-pictograms {
 	width: 100%;
-	min-height: 44px;
+	height: 44px;               /* hauteur fixe (pas min-height) : ne doit
+	                                jamais grandir, même avec 5 pictos --
+	                                sécurité en plus du fait qu'ils tiennent
+	                                déjà sur une ligne en pratique */
+	overflow: hidden;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
